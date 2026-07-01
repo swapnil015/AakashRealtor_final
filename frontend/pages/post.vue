@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Category, City, Amenity } from '~/types'
+import type { Category, City, Amenity, Area } from '~/types'
 import { ApiError } from '~/composables/useApi'
 
 definePageMeta({ middleware: 'auth' })
@@ -49,6 +49,65 @@ const error = ref('')
 
 const selectedCity = computed(() => refs.value?.cities.find((c) => c.id === form.city_id))
 const selectedCategory = computed(() => refs.value?.categories.find((c) => c.id === form.category_id))
+
+// ── Areas for the selected city (the /cities list omits areas) ──────────
+const cityAreas = ref<Area[]>([])
+const mapNote = ref('')
+
+async function loadAreasFor(cityId: number | null): Promise<Area[]> {
+  const city = refs.value?.cities.find((c) => c.id === cityId)
+  if (!city) { cityAreas.value = []; return [] }
+  try {
+    const { data } = await api.get<Area[]>(`/cities/${city.public_id}/areas`)
+    cityAreas.value = data ?? []
+  } catch {
+    cityAreas.value = []
+  }
+  return cityAreas.value
+}
+
+// Reload areas whenever the city changes; drop a stale area selection.
+watch(() => form.city_id, async (id) => {
+  const areas = await loadAreasFor(id)
+  if (form.area_id && !areas.some((a) => a.id === form.area_id)) form.area_id = null
+})
+
+const norm = (s: string) => (s || '').toLowerCase().replace(/[^a-z]/g, '')
+
+// ── Map pick → auto-fill the location fields ────────────────────────────
+async function onMapPicked(p: {
+  lat: number; lng: number; address: string
+  city: string; area: string; district: string; province: string
+}) {
+  form.latitude = Number(p.lat.toFixed(7))
+  form.longitude = Number(p.lng.toFixed(7))
+  if (p.address) form.address = p.address
+
+  // Match the returned place names to one of our known cities.
+  const candidates = [p.city, p.district, p.area, p.province].map(norm).filter(Boolean)
+  const city = refs.value?.cities.find((c) => {
+    const n = norm(c.name)
+    return candidates.some((cand) => cand.includes(n) || n.includes(cand))
+  })
+
+  if (city) {
+    form.city_id = city.id
+    const areas = await loadAreasFor(city.id)
+    // Try to match the neighbourhood/suburb to one of the city's areas.
+    const areaName = norm(p.area)
+    const match = areaName
+      ? areas.find((a) => { const n = norm(a.name); return n.includes(areaName) || areaName.includes(n) })
+      : null
+    form.area_id = match?.id ?? null
+    mapNote.value = match
+      ? `Auto-filled: ${city.name} · ${match.name}`
+      : `Auto-filled city: ${city.name}${p.area ? ` · area "${p.area}" not in our list — pick manually` : ''}`
+  } else {
+    mapNote.value = p.city
+      ? `Detected "${p.city}" — not in our city list yet. Coordinates + address filled; choose the nearest city.`
+      : 'Coordinates filled. Please choose the city.'
+  }
+}
 
 function onFiles(e: Event) {
   const list = Array.from((e.target as HTMLInputElement).files ?? [])
@@ -172,18 +231,43 @@ useSeoMeta({ title: 'Post a Property', robots: 'noindex' })
 
       <!-- Step 3: Location -->
       <div v-show="step === 3" class="space-y-4">
+        <div>
+          <label class="eyebrow">Pin your location on the map</label>
+          <p class="mb-2 mt-1 text-sm text-muted">
+            Tap the exact spot on the map of Nepal — we'll auto-fill the city, area and address for you.
+          </p>
+          <!-- Only mount the map when this step is active (Leaflet needs a sized container). -->
+          <ClientOnly>
+            <NepalLocationMap
+              v-if="step === 3"
+              :lat="form.latitude"
+              :lng="form.longitude"
+              @picked="onMapPicked"
+            />
+            <template #fallback>
+              <div class="grid h-[340px] place-items-center rounded-xl border border-slate-200 bg-sand text-sm text-muted">
+                Loading map…
+              </div>
+            </template>
+          </ClientOnly>
+          <p v-if="mapNote" class="mt-2 text-xs font-semibold text-gold-hover">{{ mapNote }}</p>
+        </div>
+
+        <div class="border-t border-slate-100 pt-4">
+          <label class="eyebrow">Or enter it manually</label>
+        </div>
         <select v-model.number="form.city_id" class="field">
           <option :value="null">Select city</option>
           <option v-for="c in refs?.cities" :key="c.id" :value="c.id">{{ c.name }}</option>
         </select>
-        <select v-if="selectedCity?.areas?.length" v-model.number="form.area_id" class="field">
+        <select v-if="cityAreas.length" v-model.number="form.area_id" class="field">
           <option :value="null">Select area (optional)</option>
-          <option v-for="a in selectedCity.areas" :key="a.id" :value="a.id">{{ a.name }}</option>
+          <option v-for="a in cityAreas" :key="a.id" :value="a.id">{{ a.name }}</option>
         </select>
         <input v-model="form.address" placeholder="Street address / landmark" class="field" />
         <div class="grid grid-cols-2 gap-3">
-          <input v-model.number="form.latitude" type="number" step="any" placeholder="Latitude (optional)" class="field" />
-          <input v-model.number="form.longitude" type="number" step="any" placeholder="Longitude (optional)" class="field" />
+          <input v-model.number="form.latitude" type="number" step="any" placeholder="Latitude" class="field" />
+          <input v-model.number="form.longitude" type="number" step="any" placeholder="Longitude" class="field" />
         </div>
       </div>
 
