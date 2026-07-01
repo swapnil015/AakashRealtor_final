@@ -1,0 +1,26 @@
+# ═════════════════════════════════════════════════════════════════════════════
+#  crontab.example — host cron entries for Aakash Realtor ops
+#
+#  Install for the deploy user:
+#      crontab -e            # then paste the lines below
+#  or:
+#      crontab deploy/backup/crontab.example
+#
+#  All times are the HOST timezone — set the host to Asia/Kathmandu (or adjust)
+#  so "nightly" lines up with low-traffic hours.
+# ═════════════════════════════════════════════════════════════════════════════
+
+# m  h  dom mon dow   command
+
+# Nightly PostgreSQL backup at 02:15, log to file.
+15 2 * * *   /opt/aakash/deploy/backup/db-backup.sh >> /var/log/aakash/db-backup.log 2>&1
+
+# Renew Let's Encrypt certs twice daily (certbot is a no-op until ~30d to expiry).
+17 3,15 * * * certbot renew --quiet --deploy-hook "systemctl reload nginx"
+
+# Weekly docker image prune (Sun 04:00) to reclaim disk from old builds.
+0 4 * * 0    docker image prune -af >> /var/log/aakash/docker-prune.log 2>&1
+
+# OPTIONAL: if NOT using the in-container scheduler (schedule:work), run the
+# Laravel scheduler from host cron every minute instead:
+# * * * * *  cd /opt/aakash/deploy && docker compose run --rm --no-deps api php artisan schedule:run >/dev/null 2>&1

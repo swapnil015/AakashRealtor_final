@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="image-slot.js"></script>
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:auto}
+  body{margin:0;background:#F8F7F4;font-family:'Manrope',system-ui,sans-serif;-webkit-font-smoothing:antialiased;color:#0F172A}
+  image-slot{--ph-bg:#E7E3DA}
+  @keyframes ak-zoom{from{transform:scale(1.02)}to{transform:scale(1.12)}}
+  @keyframes ak-float{0%,100%{transform:translateY(0);opacity:.9}50%{transform:translateY(9px);opacity:.5}}
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important} }
+  @media (pointer:coarse){ #ak-dot,#ak-ring{display:none !important} }
+</style>
+</helmet>
+
+<div style="position:relative;overflow-x:hidden">
+
+  <!-- SCROLL PROGRESS -->
+  <div id="ak-progress" style="position:fixed;top:0;left:0;height:3px;width:0;background:var(--gold,#C9A227);z-index:120;will-change:width"></div>
+
+  <!-- CUSTOM CURSOR -->
+  <div id="ak-ring" style="position:fixed;top:0;left:0;width:38px;height:38px;border:1.5px solid rgba(201,162,39,.8);border-radius:50%;pointer-events:none;z-index:200;display:none;transition:width .25s ease,height .25s ease,background .25s ease;will-change:transform"></div>
+  <div id="ak-dot" style="position:fixed;top:0;left:0;width:7px;height:7px;background:var(--gold,#C9A227);border-radius:50%;pointer-events:none;z-index:201;display:none;will-change:transform"></div>
+
+  <!-- LOADER -->
+  <div id="ak-loader" style="position:fixed;inset:0;background:#F8F7F4;z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;transition:opacity .7s ease">
+    <div style="display:flex;align-items:center;gap:13px">
+      <div style="width:48px;height:48px;border-radius:12px;background:#0F172A;display:flex;align-items:center;justify-content:center;color:var(--gold,#C9A227);font:700 25px/1 'Cormorant Garamond',serif">A</div>
+      <div style="font:700 26px/1 'Cormorant Garamond',serif;letter-spacing:.04em;color:#0F172A">AAKASH REALTOR</div>
+    </div>
+    <div style="width:220px;height:2px;background:#E5E1D8;border-radius:2px;overflow:hidden">
+      <div id="ak-loader-bar" style="height:100%;width:0;background:var(--gold,#C9A227)"></div>
+    </div>
+  </div>
+
+  <!-- ============ NAVBAR (fixed, transparent → solid) ============ -->
+  <header id="ak-header" style="--nav:#ffffff;position:fixed;top:0;left:0;right:0;z-index:100;padding:26px 48px;display:flex;align-items:center;gap:34px;transition:padding .35s ease,background .35s ease,box-shadow .35s ease,backdrop-filter .35s ease">
+    <a href="#top" style="display:flex;align-items:center;gap:11px;text-decoration:none;white-space:nowrap" data-magnetic>
+      <div style="width:40px;height:40px;border-radius:10px;background:var(--gold,#C9A227);display:flex;align-items:center;justify-content:center;color:#0F172A;font:700 21px/1 'Cormorant Garamond',serif">A</div>
+      <div style="font:700 20px/1 'Cormorant Garamond',serif;letter-spacing:.03em;color:var(--nav,#fff)">AAKASH REALTOR</div>
+    </a>
+    <nav style="display:flex;align-items:center;gap:8px;font:600 14px/1 'Manrope';margin-left:8px">
+      <a href="#featured" data-underline style="position:relative;text-decoration:none;color:var(--nav,#fff);padding:8px 4px">Buy</a>
+      <a href="#featured" data-underline style="position:relative;text-decoration:none;color:var(--nav,#fff);padding:8px 4px">Rent</a>
+      <a href="#exclusive" data-underline style="position:relative;text-decoration:none;color:var(--nav,#fff);padding:8px 4px">Exclusive</a>
+      <a href="#about" data-underline style="position:relative;text-decoration:none;color:var(--nav,#fff);padding:8px 4px">About</a>
+      <a href="#contact" data-underline style="position:relative;text-decoration:none;color:var(--nav,#fff);padding:8px 4px">Contact</a>
+    </nav>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:18px">
+      <a href="#" style="text-decoration:none;font:600 14px/1 'Manrope';color:var(--nav,#fff);white-space:nowrap">Log in</a>
+      <a href="#" data-magnetic style="text-decoration:none;font:700 14px/1 'Manrope';color:#0F172A;background:var(--gold,#C9A227);padding:13px 20px;border-radius:11px;white-space:nowrap;transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s ease" style-hover="box-shadow:0 14px 30px -10px rgba(201,162,39,.6)">＋ Post Property</a>
+    </div>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section id="top" style="position:relative;height:100vh;min-height:680px;overflow:hidden;display:flex;align-items:center">
+    <div id="ak-hero-parallax" style="position:absolute;inset:-6% 0;will-change:transform">
+      <div style="position:absolute;inset:0;animation:ak-zoom 22s ease-in-out infinite alternate;will-change:transform">
+        <image-slot id="aakash-hero" style="position:absolute;inset:0;width:100%;height:100%;display:block" shape="rect" placeholder="Drop a luxury hero home — a hillside villa at dusk"></image-slot>
+      </div>
+    </div>
+    <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,12,22,.82) 0%,rgba(8,12,22,.5) 45%,rgba(8,12,22,.15) 100%)"></div>
+    <div style="position:relative;max-width:1280px;margin:0 auto;padding:0 48px;width:100%">
+      <div style="max-width:660px;color:#fff">
+        <div data-hero style="opacity:0;transform:translateY(40px);transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1);font:600 12.5px/1 'Manrope';letter-spacing:.24em;text-transform:uppercase;color:var(--gold,#C9A227);margin-bottom:24px">Nepal's Curated Property Collection</div>
+        <h1 data-hero style="opacity:0;transform:translateY(50px);transition:opacity 1.1s cubic-bezier(.16,1,.3,1),transform 1.1s cubic-bezier(.16,1,.3,1);font:600 74px/1.0 'Cormorant Garamond',serif;letter-spacing:-.015em;margin:0 0 22px">Find a home that<br>lives up to you.</h1>
+        <p data-hero style="opacity:0;transform:translateY(50px);transition:opacity 1.1s cubic-bezier(.16,1,.3,1),transform 1.1s cubic-bezier(.16,1,.3,1);font:400 19px/1.6 'Manrope';color:rgba(255,255,255,.82);margin:0 0 38px;max-width:520px">Hand-verified villas, apartments and land across the Kathmandu valley — every listing checked against its lalpurja.</p>
+        <div data-hero style="opacity:0;transform:translateY(50px);transition:opacity 1.1s cubic-bezier(.16,1,.3,1),transform 1.1s cubic-bezier(.16,1,.3,1);display:flex;gap:14px;align-items:center">
+          <a href="#featured" data-magnetic style="text-decoration:none;font:700 15px/1 'Manrope';color:#0F172A;background:var(--gold,#C9A227);padding:17px 30px;border-radius:12px;transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s ease" style-hover="box-shadow:0 16px 36px -10px rgba(201,162,39,.65)">Explore Listings</a>
+          <a href="#exclusive" style="text-decoration:none;font:700 15px/1 'Manrope';color:#fff;border:1px solid rgba(255,255,255,.35);padding:17px 28px;border-radius:12px;transition:background .25s ease,border-color .25s ease" style-hover="background:rgba(255,255,255,.1);border-color:#fff">View Exclusive</a>
+        </div>
+        <div data-hero style="opacity:0;transform:translateY(50px);transition:opacity 1.1s cubic-bezier(.16,1,.3,1),transform 1.1s cubic-bezier(.16,1,.3,1);display:flex;gap:40px;margin-top:46px">
+          <div><div style="font:600 32px/1 'Cormorant Garamond',serif;color:#fff">2,800+</div><div style="font:500 13px/1 'Manrope';color:rgba(255,255,255,.6);margin-top:7px">Verified listings</div></div>
+          <div><div style="font:600 32px/1 'Cormorant Garamond',serif;color:#fff">18 yrs</div><div style="font:500 13px/1 'Manrope';color:rgba(255,255,255,.6);margin-top:7px">In the valley</div></div>
+          <div><div style="font:600 32px/1 'Cormorant Garamond',serif;color:#fff">100%</div><div style="font:500 13px/1 'Manrope';color:rgba(255,255,255,.6);margin-top:7px">Lalpurja checked</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:30px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:9px;color:rgba(255,255,255,.7)">
+      <span style="font:600 10px/1 'Manrope';letter-spacing:.2em;text-transform:uppercase">Scroll</span>
+      <span style="animation:ak-float 1.8s ease-in-out infinite;font-size:17px">↓</span>
+    </div>
+  </section>
+
+  <!-- ============ FEATURED ============ -->
+  <section id="featured" style="padding:120px 48px;max-width:1280px;margin:0 auto">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:48px">
+      <div>
+        <div data-reveal style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);font:600 12px/1 'Manrope';letter-spacing:.2em;text-transform:uppercase;color:var(--gold,#C9A227)">Hand-picked this week</div>
+        <h2 data-reveal data-stagger="0.08" style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);font:600 52px/1.03 'Cormorant Garamond',serif;letter-spacing:-.015em;margin:16px 0 0">Featured Properties</h2>
+      </div>
+      <a data-reveal href="#" style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);text-decoration:none;font:600 14px/1 'Manrope';color:#0F172A;border-bottom:2px solid var(--gold,#C9A227);padding-bottom:5px">View all featured →</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:26px">
+      <sc-for list="{{ featured }}" as="p" hint-placeholder-count="4">
+        <div data-card data-reveal style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1),box-shadow .4s ease;background:#fff;border:1px solid #EFEDE7;border-radius:16px;overflow:hidden;cursor:pointer" data-stagger="{{ p.delay }}">
+          <div style="position:relative;overflow:hidden;height:230px">
+            <div data-card-img style="position:absolute;inset:0;transition:transform .7s cubic-bezier(.16,1,.3,1)">
+              <image-slot id="{{ p.slotId }}" style="width:100%;height:100%;display:block" shape="rect" placeholder="{{ p.photo }}"></image-slot>
+            </div>
+            <div style="position:absolute;top:13px;left:13px;background:rgba(15,23,42,.78);backdrop-filter:blur(4px);color:#fff;font:700 10.5px/1 'Manrope';letter-spacing:.08em;text-transform:uppercase;padding:7px 11px;border-radius:999px;z-index:2">{{ p.tag }}</div>
+            <div style="position:absolute;bottom:13px;left:13px;background:rgba(255,255,255,.95);color:#0F172A;font:700 16px/1 'Manrope';padding:8px 13px;border-radius:9px;z-index:2">{{ p.price }}</div>
+          </div>
+          <div style="padding:17px 18px 19px">
+            <h3 data-card-title style="font:600 23px/1.15 'Cormorant Garamond',serif;margin:0 0 5px;transition:transform .4s cubic-bezier(.16,1,.3,1)">{{ p.title }}</h3>
+            <div style="font:500 13px/1 'Manrope';color:#475569;margin-bottom:14px">📍 {{ p.area }}, {{ p.city }}</div>
+            <div style="border-top:1px solid #F1EEE8;padding-top:13px;display:flex;align-items:center;justify-content:space-between">
+              <span style="font:600 12.5px/1 'Manrope';color:#475569">{{ p.specs }}</span>
+              <span data-card-cta style="font:700 12.5px/1 'Manrope';color:var(--goldH,#B38F1E);opacity:0;transform:translateY(6px);transition:opacity .35s ease,transform .35s cubic-bezier(.16,1,.3,1)">View →</span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT + STATS ============ -->
+  <section id="about" style="background:#fff;border-top:1px solid #EFEDE7;border-bottom:1px solid #EFEDE7;padding:120px 48px">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center">
+      <div data-reveal style="opacity:0;transform:translateX(-60px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+        <image-slot id="about-img" style="width:100%;height:460px;display:block;border-radius:18px" shape="rounded" radius="18" placeholder="Architectural property / team photo"></image-slot>
+      </div>
+      <div data-reveal style="opacity:0;transform:translateX(60px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)">
+        <div style="font:600 12px/1 'Manrope';letter-spacing:.2em;text-transform:uppercase;color:var(--gold,#C9A227)">Since 2008</div>
+        <h2 style="font:600 50px/1.05 'Cormorant Garamond',serif;letter-spacing:-.015em;margin:16px 0 20px">Eighteen years of quiet expertise.</h2>
+        <p style="font:400 16.5px/1.7 'Manrope';color:#475569;margin:0 0 36px;max-width:480px">We represent the valley's most considered homes — and the people who build their lives in them. Every listing is inspected in person and verified against its lalpurja before it carries our name.</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px">
+          <div><div data-count data-to="500" data-suffix="+" style="font:600 46px/1 'Cormorant Garamond',serif;color:#0F172A">0</div><div style="font:500 13px/1.3 'Manrope';color:#475569;margin-top:8px">Projects represented</div></div>
+          <div><div data-count data-to="1200" data-suffix="+" style="font:600 46px/1 'Cormorant Garamond',serif;color:#0F172A">0</div><div style="font:500 13px/1.3 'Manrope';color:#475569;margin-top:8px">Homes sold</div></div>
+          <div><div data-count data-to="2500" data-suffix="+" style="font:600 46px/1 'Cormorant Garamond',serif;color:#0F172A">0</div><div style="font:500 13px/1.3 'Manrope';color:#475569;margin-top:8px">Happy clients</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXCLUSIVE (dark, parallax-ish) ============ -->
+  <section id="exclusive" style="background:#0F172A;padding:120px 48px;color:#fff">
+    <div style="max-width:1280px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:54px">
+        <div data-reveal style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);font:600 12px/1 'Manrope';letter-spacing:.2em;text-transform:uppercase;color:var(--gold,#C9A227)">By invitation</div>
+        <h2 data-reveal data-stagger="0.08" style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);font:600 52px/1.03 'Cormorant Garamond',serif;letter-spacing:-.015em;margin:16px 0 0;color:#fff">The Exclusive Collection</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:26px">
+        <sc-for list="{{ exclusive }}" as="p" hint-placeholder-count="3">
+          <div data-card data-reveal style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1),border-color .4s ease;background:#1A2438;border:1px solid #2A3650;border-radius:16px;overflow:hidden;cursor:pointer" data-stagger="{{ p.delay }}">
+            <div style="position:relative;overflow:hidden;height:270px">
+              <div data-card-img style="position:absolute;inset:0;transition:transform .8s cubic-bezier(.16,1,.3,1)">
+                <image-slot id="{{ p.slotId }}" style="width:100%;height:100%;display:block" shape="rect" placeholder="{{ p.photo }}"></image-slot>
+              </div>
+              <div style="position:absolute;top:15px;left:15px;background:var(--gold,#C9A227);color:#0F172A;font:800 10.5px/1 'Manrope';letter-spacing:.08em;text-transform:uppercase;padding:7px 11px;border-radius:999px;z-index:2">{{ p.tag }}</div>
+            </div>
+            <div style="padding:22px">
+              <h3 data-card-title style="font:600 26px/1.1 'Cormorant Garamond',serif;margin:0 0 6px;color:#fff;transition:transform .4s cubic-bezier(.16,1,.3,1)">{{ p.title }}</h3>
+              <div style="font:500 13px/1 'Manrope';color:rgba(255,255,255,.55);margin-bottom:18px">📍 {{ p.area }}, {{ p.city }}</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid #2A3650;padding-top:16px">
+                <span style="font:700 20px/1 'Manrope';color:var(--gold,#C9A227)">{{ p.price }}</span>
+                <span style="font:600 12px/1 'Manrope';color:rgba(255,255,255,.6)">{{ p.specs }}</span>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIALS (auto carousel) ============ -->
+  <section style="padding:120px 48px;max-width:920px;margin:0 auto;text-align:center">
+    <div data-reveal style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);font:600 12px/1 'Manrope';letter-spacing:.2em;text-transform:uppercase;color:var(--gold,#C9A227);margin-bottom:14px">In their words</div>
+    <div data-reveal style="position:relative;height:240px">
+      <sc-for list="{{ testimonials }}" as="t" hint-placeholder-count="3">
+        <div data-tslide="{{ t.index }}" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .8s ease;pointer-events:none">
+          <div style="font:500 33px/1.4 'Cormorant Garamond',serif;color:#0F172A;margin:0 0 28px;max-width:760px">"{{ t.quote }}"</div>
+          <div style="display:flex;align-items:center;gap:13px">
+            <image-slot id="{{ t.slotId }}" style="width:50px;height:50px;display:block" shape="circle" placeholder=""></image-slot>
+            <div style="text-align:left"><div style="font:700 15px/1 'Manrope';color:#0F172A">{{ t.name }}</div><div style="font:500 12.5px/1 'Manrope';color:#475569;margin-top:5px">{{ t.role }}</div></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:9px;justify-content:center;margin-top:18px">
+      <sc-for list="{{ testimonials }}" as="t" hint-placeholder-count="3">
+        <span data-dot="{{ t.index }}" style="width:7px;height:7px;border-radius:999px;background:#D8D3C8;cursor:pointer;transition:all .4s ease"></span>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ============ GALLERY / BROWSE BY CITY ============ -->
+  <section style="padding:0 48px 120px;max-width:1280px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:50px">
+      <div data-reveal style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);font:600 12px/1 'Manrope';letter-spacing:.2em;text-transform:uppercase;color:var(--gold,#C9A227)">Explore Nepal</div>
+      <h2 data-reveal data-stagger="0.08" style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);font:600 52px/1.03 'Cormorant Garamond',serif;letter-spacing:-.015em;margin:16px 0 0">Browse by City</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px">
+      <sc-for list="{{ cities }}" as="c" hint-placeholder-count="4">
+        <div data-tile data-reveal style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);position:relative;height:320px;border-radius:16px;overflow:hidden;cursor:pointer" data-stagger="{{ c.delay }}">
+          <div data-tile-img style="position:absolute;inset:0;transition:transform .8s cubic-bezier(.16,1,.3,1)">
+            <image-slot id="{{ c.slotId }}" style="position:absolute;inset:0;width:100%;height:100%;display:block" shape="rect" placeholder="{{ c.photo }}"></image-slot>
+          </div>
+          <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,12,22,.85) 0%,rgba(8,12,22,.05) 62%)"></div>
+          <div data-tile-text style="position:absolute;bottom:0;left:0;right:0;padding:22px;transition:transform .45s cubic-bezier(.16,1,.3,1)">
+            <div style="font:600 28px/1 'Cormorant Garamond',serif;color:#fff">{{ c.name }}</div>
+            <div style="font:600 12.5px/1 'Manrope';color:var(--gold,#C9A227);margin-top:8px">{{ c.count }} listings →</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact" style="background:#fff;border-top:1px solid #EFEDE7;padding:120px 48px">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center">
+      <div data-reveal style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1)">
+        <div style="font:600 12px/1 'Manrope';letter-spacing:.2em;text-transform:uppercase;color:var(--gold,#C9A227)">Speak with us</div>
+        <h2 style="font:600 50px/1.05 'Cormorant Garamond',serif;letter-spacing:-.015em;margin:16px 0 18px">Let's find your address.</h2>
+        <p style="font:400 16px/1.7 'Manrope';color:#475569;margin:0 0 28px;max-width:440px">Tell us what you're looking for and a valley specialist will reach out — usually within the hour.</p>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <input placeholder="Your name" style="border:1px solid #E5E7EB;border-radius:11px;padding:15px 16px;font:500 14px/1 'Manrope';transition:border-color .25s ease,box-shadow .25s ease;outline:none" style-focus="border-color:var(--gold,#C9A227);box-shadow:0 0 0 4px rgba(201,162,39,.14)" />
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <input placeholder="Email" style="border:1px solid #E5E7EB;border-radius:11px;padding:15px 16px;font:500 14px/1 'Manrope';transition:border-color .25s ease,box-shadow .25s ease;outline:none" style-focus="border-color:var(--gold,#C9A227);box-shadow:0 0 0 4px rgba(201,162,39,.14)" />
+            <input placeholder="Phone" style="border:1px solid #E5E7EB;border-radius:11px;padding:15px 16px;font:500 14px/1 'Manrope';transition:border-color .25s ease,box-shadow .25s ease;outline:none" style-focus="border-color:var(--gold,#C9A227);box-shadow:0 0 0 4px rgba(201,162,39,.14)" />
+          </div>
+          <textarea placeholder="What are you looking for?" style="border:1px solid #E5E7EB;border-radius:11px;padding:15px 16px;font:500 14px/1.5 'Manrope';resize:none;height:96px;transition:border-color .25s ease,box-shadow .25s ease;outline:none" style-focus="border-color:var(--gold,#C9A227);box-shadow:0 0 0 4px rgba(201,162,39,.14)"></textarea>
+          <a href="#" data-magnetic style="text-decoration:none;text-align:center;background:var(--gold,#C9A227);color:#0F172A;font:700 15px/1 'Manrope';padding:16px 0;border-radius:11px;transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .25s ease" style-hover="box-shadow:0 14px 30px -10px rgba(201,162,39,.6)">Send Inquiry</a>
+        </div>
+      </div>
+      <div data-reveal style="opacity:0;transform:translateY(46px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);position:relative;height:520px;border-radius:18px;overflow:hidden;background:linear-gradient(135deg,#E8EDE6 0%,#DCE4DB 100%);border:1px solid #E5E7EB">
+        <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(15,23,42,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(15,23,42,.05) 1px,transparent 1px);background-size:48px 48px"></div>
+        <div style="position:absolute;top:44%;left:50%;transform:translate(-50%,-100%);font-size:34px">📍</div>
+        <div style="position:absolute;bottom:18px;left:18px;background:rgba(255,255,255,.94);border-radius:12px;padding:14px 18px"><div style="font:700 14px/1 'Manrope';color:#0F172A">Aakash Realtor HQ</div><div style="font:500 12.5px/1.4 'Manrope';color:#475569;margin-top:6px">Durbar Marg, Kathmandu 44600<br>+977 1 4002200</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer style="background:#0F172A;color:#CBD5E1;padding:80px 48px 36px">
+    <div style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:46px;padding-bottom:52px;border-bottom:1px solid #1E2A42">
+      <div>
+        <div style="display:flex;align-items:center;gap:11px;margin-bottom:18px">
+          <div style="width:40px;height:40px;border-radius:10px;background:var(--gold,#C9A227);display:flex;align-items:center;justify-content:center;color:#0F172A;font:700 21px/1 'Cormorant Garamond',serif">A</div>
+          <div style="font:700 19px/1 'Cormorant Garamond',serif;color:#fff;letter-spacing:.03em">AAKASH REALTOR</div>
+        </div>
+        <p style="font:400 13.5px/1.7 'Manrope';color:#94A3B8;margin:0 0 20px;max-width:300px">Nepal's curated property marketplace — every listing verified against its lalpurja.</p>
+        <div style="display:flex;gap:11px">
+          <span data-social style="width:38px;height:38px;border:1px solid #2A3650;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;cursor:pointer;transition:transform .3s cubic-bezier(.16,1,.3,1),background .3s ease,border-color .3s ease">f</span>
+          <span data-social style="width:38px;height:38px;border:1px solid #2A3650;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;cursor:pointer;transition:transform .3s cubic-bezier(.16,1,.3,1),background .3s ease,border-color .3s ease">in</span>
+          <span data-social style="width:38px;height:38px;border:1px solid #2A3650;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;cursor:pointer;transition:transform .3s cubic-bezier(.16,1,.3,1),background .3s ease,border-color .3s ease">◎</span>
+        </div>
+      </div>
+      <div>
+        <div style="font:700 13px/1 'Manrope';color:#fff;margin-bottom:18px">Company</div>
+        <div style="display:flex;flex-direction:column;gap:13px;font:500 13.5px/1 'Manrope'">
+          <a href="#" data-flink style="color:#94A3B8;text-decoration:none;transition:color .25s ease" style-hover="color:#fff">About Us</a>
+          <a href="#" data-flink style="color:#94A3B8;text-decoration:none;transition:color .25s ease" style-hover="color:#fff">Our Team</a>
+          <a href="#" data-flink style="color:#94A3B8;text-decoration:none;transition:color .25s ease" style-hover="color:#fff">Branches</a>
+          <a href="#" data-flink style="color:#94A3B8;text-decoration:none;transition:color .25s ease" style-hover="color:#fff">Careers</a>
+        </div>
+      </div>
+      <div>
+        <div style="font:700 13px/1 'Manrope';color:#fff;margin-bottom:18px">Explore</div>
+        <div style="display:flex;flex-direction:column;gap:13px;font:500 13.5px/1 'Manrope'">
+          <a href="#" style="color:#94A3B8;text-decoration:none;transition:color .25s ease" style-hover="color:#fff">Buy</a>
+          <a href="#" style="color:#94A3B8;text-decoration:none;transition:color .25s ease" style-hover="color:#fff">Rent</a>
+          <a href="#" style="color:#94A3B8;text-decoration:none;transition:color .25s ease" style-hover="color:#fff">Exclusive</a>
+          <a href="#" style="color:#94A3B8;text-decoration:none;transition:color .25s ease" style-hover="color:#fff">New Projects</a>
+        </div>
+      </div>
+      <div>
+        <div style="font:700 13px/1 'Manrope';color:#fff;margin-bottom:18px">Newsletter</div>
+        <p style="font:400 12.5px/1.6 'Manrope';color:#94A3B8;margin:0 0 14px">Curated listings, monthly.</p>
+        <div style="display:flex;background:#1A2438;border:1px solid #2A3650;border-radius:10px;overflow:hidden">
+          <input placeholder="Email" style="flex:1;background:none;border:0;outline:none;color:#fff;font:500 13px/1 'Manrope';padding:12px 13px;min-width:0" />
+          <button style="background:var(--gold,#C9A227);border:0;color:#0F172A;font:700 13px/1 'Manrope';padding:0 16px;cursor:pointer">→</button>
+        </div>
+      </div>
+    </div>
+    <div style="max-width:1280px;margin:26px auto 0;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+      <p style="font:400 12px/1.6 'Manrope';color:#64748B;margin:0;max-width:720px">© 2026 Aakash Realtor Pvt. Ltd. Listing information is believed reliable but not guaranteed; verify all details and lalpurja independently before any transaction.</p>
+      <div style="font:500 12px/1 'Manrope';color:#64748B">Made in Kathmandu 🇳🇵</div>
+    </div>
+  </footer>
+
+  <!-- floating WhatsApp -->
+  <a href="#" data-magnetic style="position:fixed;right:28px;bottom:28px;width:60px;height:60px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 14px 32px -8px rgba(37,211,102,.6);text-decoration:none;font-size:30px;z-index:90;transition:transform .25s cubic-bezier(.16,1,.3,1)">💬</a>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 1280, &quot;height&quot;: 900 }
+}">
+class Component extends DCLogic {
+  // Testimonial carousel + reveals are driven via the DOM so the component
+  // never re-renders after mount (a re-render would reset the template's
+  // initial opacity:0 and wipe the revealed state).
+  renderVals() {
+    const gold = '#C9A227';
+    const featured = [
+      { slotId:'p1', photo:'Hillside glass villa', tag:'Featured',  title:'Hillside Glass Villa', area:'Budhanilkantha', city:'Kathmandu', price:'Rs. 12.5 Cr', specs:'5 Bd · 6 Ba · 6,200 sq.ft', delay:'0' },
+      { slotId:'p2', photo:'Riverside duplex',     tag:'Exclusive', title:'Riverside Duplex',     area:'Sanepa',         city:'Lalitpur',  price:'Rs. 4.8 Cr',  specs:'3 Bd · 3 Ba · 2,400 sq.ft', delay:'0.1' },
+      { slotId:'p3', photo:'Heritage courtyard',   tag:'New',       title:'Heritage Courtyard',   area:'Patan',          city:'Lalitpur',  price:'Rs. 8.2 Cr',  specs:'4 Bd · 4 Ba · 4,100 sq.ft', delay:'0.2' },
+      { slotId:'p4', photo:'Skyline penthouse',    tag:'Featured',  title:'Skyline Penthouse',    area:'Baluwatar',      city:'Kathmandu', price:'Rs. 9.6 Cr',  specs:'4 Bd · 5 Ba · 3,800 sq.ft', delay:'0.3' }
+    ];
+    const exclusive = [
+      { slotId:'e1', photo:'Lakeview estate at dusk',   tag:'Off-market',     title:'Lakeview Estate',  area:'Lakeside',    city:'Pokhara',   price:'Rs. 18.0 Cr', specs:'6 Bd · 3,500 sq.m', delay:'0' },
+      { slotId:'e2', photo:'Modernist hill residence',  tag:'By appointment', title:'The Cedar House',  area:'Bhaisepati',  city:'Lalitpur',  price:'Rs. 15.4 Cr', specs:'5 Bd · 7,800 sq.ft', delay:'0.1' },
+      { slotId:'e3', photo:'Private courtyard mansion', tag:'Off-market',     title:'Courtyard Mansion',area:'Maharajgunj', city:'Kathmandu', price:'Rs. 22.0 Cr', specs:'7 Bd · 9,400 sq.ft', delay:'0.2' }
+    ];
+    const cities = [
+      { slotId:'c1', name:'Kathmandu', count:'1,240', photo:'Kathmandu skyline', delay:'0' },
+      { slotId:'c2', name:'Lalitpur',  count:'860',   photo:'Patan rooftops',    delay:'0.1' },
+      { slotId:'c3', name:'Bhaktapur', count:'410',   photo:'Bhaktapur durbar',  delay:'0.2' },
+      { slotId:'c4', name:'Pokhara',   count:'320',   photo:'Pokhara lakeside',  delay:'0.3' }
+    ];
+    const tData = [
+      { slotId:'t1', quote:'Aakash found us an off-market home in Budhanilkantha before it ever went public. Calm, precise, and never pushy.', name:'Anjali & Rajan Pradhan', role:'Bought in Budhanilkantha' },
+      { slotId:'t2', quote:'As an NRN buyer I worried about the paperwork. They handled the lalpurja and registration end to end.', name:'Bikash Gurung', role:'NRN buyer · Sydney' },
+      { slotId:'t3', quote:'They sold our Patan property in three weeks at a price we did not think possible. Genuinely exceptional.', name:'Sunita Maharjan', role:'Sold in Patan' }
+    ];
+    const testimonials = tData.map((t, i) => ({
+      slotId: t.slotId, quote: t.quote, name: t.name, role: t.role, index: i
+    }));
+
+    return { featured, exclusive, cities, testimonials };
+  }
+
+  componentDidMount() {
+    const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // A hidden/backgrounded tab freezes CSS transitions mid-flight (the
+    // compositor is paused), which would leave reveal elements stuck at
+    // opacity:0. In that case — and for reduced-motion — reveal instantly
+    // with transitions disabled. Visible users get the full animation.
+    const instant = prefersReduce || document.visibilityState === 'hidden';
+    this._reduce = instant;
+    this._instant = instant;
+    this.setupReveal(instant);
+    this.setupScroll();
+    this.setupCards();
+    this.setupLoader(instant);
+    if (!instant) {
+      this.setupLenis();
+      this.setupCursor();
+    }
+    this.setupCarousel();
+  }
+
+  // -------- Testimonial carousel (DOM-driven, no re-renders) --------
+  setupCarousel() {
+    const slides = Array.from(document.querySelectorAll('[data-tslide]'));
+    const dots = Array.from(document.querySelectorAll('[data-dot]'));
+    if (!slides.length) return;
+    let idx = 0;
+    if (this._instant) slides.forEach(s => { s.style.transition = 'none'; });
+    const show = (n) => {
+      idx = (n + slides.length) % slides.length;
+      slides.forEach((s, i) => { s.style.opacity = i === idx ? '1' : '0'; });
+      dots.forEach((d, i) => { d.style.width = i === idx ? '26px' : '7px'; d.style.background = i === idx ? '#C9A227' : '#D8D3C8'; });
+    };
+    const restart = () => { clearInterval(this._tTimer); this._tTimer = setInterval(() => show(idx + 1), 5000); };
+    show(0);
+    dots.forEach((d, i) => d.addEventListener('click', () => { show(i); restart(); }));
+    restart();
+  }
+
+  componentWillUnmount() {
+    clearInterval(this._tTimer);
+    if (this._onScroll) window.removeEventListener('scroll', this._onScroll);
+    if (this._lenis) this._lenis.destroy();
+  }
+
+  // -------- Scroll reveals (IntersectionObserver) --------
+  setupReveal(reduce) {
+    const els = Array.from(document.querySelectorAll('[data-reveal]'));
+    if (reduce || !('IntersectionObserver' in window)) {
+      els.forEach(e => { e.style.transition = 'none'; e.style.opacity = 1; e.style.transform = 'none'; });
+      this.runCounts();
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        const el = en.target;
+        const d = parseFloat(el.dataset.stagger || '0');
+        el.style.transitionDelay = d + 's';
+        el.style.opacity = 1;
+        el.style.transform = 'none';
+        el.querySelectorAll && el.querySelectorAll('[data-count]').forEach(c => this.countUp(c));
+        if (el.hasAttribute('data-count')) this.countUp(el);
+        io.unobserve(el);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
+    els.forEach(e => io.observe(e));
+  }
+
+  runCounts() {
+    document.querySelectorAll('[data-count]').forEach(c => this.countUp(c));
+  }
+
+  countUp(el) {
+    if (el._counted) return; el._counted = true;
+    const to = parseFloat(el.dataset.to || '0');
+    const suf = el.dataset.suffix || '';
+    const dur = 1500, start = performance.now();
+    const tick = (now) => {
+      const p = Math.min(1, (now - start) / dur);
+      const e = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(to * e).toLocaleString('en-IN') + suf;
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // -------- Scroll: progress bar, navbar, hero parallax --------
+  setupScroll() {
+    const prog = document.getElementById('ak-progress');
+    const header = document.getElementById('ak-header');
+    const hero = document.getElementById('ak-hero-parallax');
+    const handler = () => {
+      const y = window.scrollY || window.pageYOffset || 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (prog) prog.style.width = (max > 0 ? (y / max) * 100 : 0) + '%';
+      if (header) {
+        if (y > 36) {
+          header.style.background = 'rgba(248,247,244,.82)';
+          header.style.backdropFilter = 'blur(20px)';
+          header.style.webkitBackdropFilter = 'blur(20px)';
+          header.style.boxShadow = '0 6px 26px -14px rgba(15,23,42,.3)';
+          header.style.paddingTop = '13px';
+          header.style.paddingBottom = '13px';
+          header.style.setProperty('--nav', '#0F172A');
+        } else {
+          header.style.background = 'transparent';
+          header.style.backdropFilter = 'none';
+          header.style.webkitBackdropFilter = 'none';
+          header.style.boxShadow = 'none';
+          header.style.paddingTop = '26px';
+          header.style.paddingBottom = '26px';
+          header.style.setProperty('--nav', '#ffffff');
+        }
+      }
+      if (hero && !this._reduce && y < window.innerHeight) {
+        hero.style.transform = 'translateY(' + (y * 0.18) + 'px)';
+      }
+    };
+    this._onScroll = handler;
+    window.addEventListener('scroll', handler, { passive: true });
+    handler();
+  }
+
+  // -------- Lenis smooth scroll --------
+  setupLenis() {
+    if (!window.Lenis) return;
+    try {
+      const lenis = new window.Lenis({
+        duration: 1.15,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true
+      });
+      this._lenis = lenis;
+      const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
+      requestAnimationFrame(raf);
+      lenis.on('scroll', () => { if (this._onScroll) this._onScroll(); });
+      document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', (e) => {
+          const id = a.getAttribute('href');
+          if (id && id.length > 1) {
+            const tgt = document.querySelector(id);
+            if (tgt) { e.preventDefault(); lenis.scrollTo(tgt, { offset: -80 }); }
+          }
+        });
+      });
+    } catch (err) { /* native scroll fallback */ }
+  }
+
+  // -------- Group hover for cards / tiles --------
+  setupCards() {
+    document.querySelectorAll('[data-card]').forEach(card => {
+      const img = card.querySelector('[data-card-img]');
+      const title = card.querySelector('[data-card-title]');
+      const cta = card.querySelector('[data-card-cta]');
+      const dark = card.style.background.indexOf('1A2438') > -1 || card.style.background.indexOf('26, 36, 56') > -1;
+      card.addEventListener('mouseenter', () => {
+        card.style.transform = 'translateY(-7px)';
+        card.style.boxShadow = dark ? '0 34px 60px -34px rgba(0,0,0,.7)' : '0 30px 60px -34px rgba(15,23,42,.5)';
+        if (dark) card.style.borderColor = '#C9A227';
+        if (img) img.style.transform = 'scale(1.08)';
+        if (title) title.style.transform = 'translateY(-2px)';
+        if (cta) { cta.style.opacity = '1'; cta.style.transform = 'translateY(0)'; }
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+        card.style.boxShadow = '';
+        if (dark) card.style.borderColor = '#2A3650';
+        if (img) img.style.transform = '';
+        if (title) title.style.transform = '';
+        if (cta) { cta.style.opacity = '0'; cta.style.transform = 'translateY(6px)'; }
+      });
+    });
+    document.querySelectorAll('[data-tile]').forEach(tile => {
+      const img = tile.querySelector('[data-tile-img]');
+      const text = tile.querySelector('[data-tile-text]');
+      tile.addEventListener('mouseenter', () => {
+        if (img) img.style.transform = 'scale(1.07)';
+        if (text) text.style.transform = 'translateY(-6px)';
+      });
+      tile.addEventListener('mouseleave', () => {
+        if (img) img.style.transform = '';
+        if (text) text.style.transform = '';
+      });
+    });
+    document.querySelectorAll('[data-social]').forEach(s => {
+      s.addEventListener('mouseenter', () => { s.style.transform = 'translateY(-3px) rotate(-6deg)'; s.style.background = '#C9A227'; s.style.borderColor = '#C9A227'; s.style.color = '#0F172A'; });
+      s.addEventListener('mouseleave', () => { s.style.transform = ''; s.style.background = ''; s.style.borderColor = '#2A3650'; s.style.color = '#fff'; });
+    });
+  }
+
+  // -------- Loader (first visit only) --------
+  setupLoader(reduce) {
+    const loader = document.getElementById('ak-loader');
+    const bar = document.getElementById('ak-loader-bar');
+    if (!loader) { this.revealHero(0.1); return; }
+    let seen = false;
+    try { seen = localStorage.getItem('aakash_seen') === '1'; } catch (e) {}
+    if (seen || reduce) { loader.style.display = 'none'; this.revealHero(0.12); return; }
+    // CSS-transition + timer based (robust even when rAF is throttled)
+    setTimeout(() => { if (bar) { bar.style.transition = 'width 1.6s cubic-bezier(.4,0,.2,1)'; bar.style.width = '100%'; } }, 40);
+    setTimeout(() => {
+      loader.style.opacity = '0';
+      try { localStorage.setItem('aakash_seen', '1'); } catch (er) {}
+      setTimeout(() => { loader.style.display = 'none'; }, 700);
+      this.revealHero(0.05);
+    }, 1750);
+  }
+
+  revealHero(base) {
+    const items = Array.from(document.querySelectorAll('[data-hero]'));
+    items.forEach((el, i) => {
+      if (this._instant) el.style.transition = 'none';
+      el.style.transitionDelay = (base + i * 0.13) + 's';
+      el.style.opacity = 1;
+      el.style.transform = 'none';
+    });
+  }
+
+  // -------- Custom cursor + magnetic buttons --------
+  setupCursor() {
+    if (window.matchMedia('(pointer:coarse)').matches) return;
+    const dot = document.getElementById('ak-dot');
+    const ring = document.getElementById('ak-ring');
+    if (!dot || !ring) return;
+    dot.style.display = 'block';
+    ring.style.display = 'block';
+    let mx = window.innerWidth / 2, my = window.innerHeight / 2, rx = mx, ry = my;
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      dot.style.transform = 'translate(' + (mx - 3.5) + 'px,' + (my - 3.5) + 'px)';
+    });
+    const loop = () => {
+      rx += (mx - rx) * 0.16; ry += (my - ry) * 0.16;
+      ring.style.transform = 'translate(' + (rx - 19) + 'px,' + (ry - 19) + 'px)';
+      requestAnimationFrame(loop);
+    };
+    requestAnimationFrame(loop);
+    const grow = () => { ring.style.width = '60px'; ring.style.height = '60px'; ring.style.background = 'rgba(201,162,39,.12)'; };
+    const shrink = () => { ring.style.width = '38px'; ring.style.height = '38px'; ring.style.background = 'transparent'; };
+    document.querySelectorAll('[data-magnetic]').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const r = btn.getBoundingClientRect();
+        const dx = e.clientX - (r.left + r.width / 2);
+        const dy = e.clientY - (r.top + r.height / 2);
+        btn.style.transform = 'translate(' + (dx * 0.28) + 'px,' + (dy * 0.34) + 'px)';
+        grow();
+      });
+      btn.addEventListener('mouseleave', () => { btn.style.transform = ''; shrink(); });
+    });
+    document.querySelectorAll('a:not([data-magnetic]), [data-underline], [data-tile], [data-card]').forEach(el => {
+      el.addEventListener('mouseenter', grow);
+      el.addEventListener('mouseleave', shrink);
+    });
+  }
+}
+</script>
+</body>
+</html>

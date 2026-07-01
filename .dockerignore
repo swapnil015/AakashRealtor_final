@@ -1,0 +1,46 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  .dockerignore — keeps the Docker build context small & secrets out of images.
+#  The build context is the repo root; both Dockerfiles copy from backend/ and
+#  frontend/ explicitly, so everything else can be excluded.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# VCS / editor / OS
+.git
+.gitignore
+.idea
+.vscode
+**/.DS_Store
+*.log
+
+# Never bake real secrets into an image layer.
+**/.env
+**/.env.*
+deploy/env/*.env.production
+!deploy/env/*.example
+
+# Dependencies / build output are rebuilt inside the image.
+backend/vendor
+frontend/node_modules
+frontend/.output
+frontend/.nuxt
+frontend/dist
+
+# Local Laravel runtime artifacts.
+backend/storage/logs/*
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/bootstrap/cache/*
+
+# Other departments / docs not needed at build time.
+mobile
+docs
+osrc-admin
+OSRC
+*.dc.html
+*.thumbnail
+
+# Tests aren't needed in the runtime image (build uses --no-dev anyway).
+backend/tests
+frontend/test
+frontend/tests

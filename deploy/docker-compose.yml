@@ -1,0 +1,176 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  docker-compose.yml — Aakash Realtor production stack
+#
+#  Services:
+#    postgres  : PostgreSQL 16 (named volume for data)
+#    redis     : Redis 7 (queue / cache / session backend)
+#    api       : Laravel php-fpm (Dockerfile.api) — serves /api/v1 via php-fpm
+#    web       : nginx in front of the api (serves public/, proxies .php :9000)
+#    nuxt      : Nuxt 3 SSR server (Dockerfile.nuxt) on :3000
+#    worker    : SAME image as api, but runs supervisord (queue workers + scheduler)
+#
+#  The host-level nginx (deploy/nginx-host/) terminates TLS and routes:
+#      api.aakashrealtor.com -> web:80
+#      aakashrealtor.com/www -> nuxt:3000
+#
+#  Run from the deploy/ directory so the build context (..) is the repo root:
+#      cd deploy && docker compose up -d --build
+#
+#  Compose Spec (no top-level `version:` key — it's obsolete in v2+).
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Shared build config for the API image, reused by both `api` and `worker`
+# so they always run identical code. YAML anchor keeps it DRY.
+x-api-build: &api-build
+  context: ..                              # repo root: D:\Aakash Realtor
+  dockerfile: deploy/docker/Dockerfile.api
+
+# Shared env_file + restart policy for PHP services.
+x-api-common: &api-common
+  image: aakash/api:latest
+  env_file:
+    - ./env/api.env.production
+  restart: unless-stopped
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  networks:
+    - backend
+
+services:
+  # ── PostgreSQL 16 ──────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-aakash_realtor}
+      POSTGRES_USER: ${DB_USERNAME:-aakash}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    # Not published to the host — only reachable on the backend network.
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-aakash} -d ${DB_DATABASE:-aakash_realtor}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - backend
+
+  # ── Redis 7 ────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    # Persist with append-only file; require a password in production.
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:?REDIS_PASSWORD is required}"]
+    volumes:
+      - redisdata:/data
+    expose:
+      - "6379"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - backend
+
+  # ── Laravel API (php-fpm) ──────────────────────────────────────────────────
+  api:
+    <<: *api-common
+    build: *api-build
+    # storage/ is a named volume so uploaded files / logs survive deploys and are
+    # SHARED with the web + worker containers (same files visible everywhere).
+    volumes:
+      - storage:/var/www/html/storage
+    expose:
+      - "9000"
+    healthcheck:
+      test: ["CMD-SHELL", "REQUEST_METHOD=GET SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # ── nginx for the API ──────────────────────────────────────────────────────
+  web:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    volumes:
+      - ./docker/nginx/api.conf:/etc/nginx/conf.d/default.conf:ro
+      # Mount the SAME app code so nginx can serve public/ static files and
+      # resolve $document_root identically to php-fpm.
+      - storage:/var/www/html/storage:ro
+    # Published only to localhost; the host nginx proxies to it. Change to
+    # "80:80" only if this compose stack is the public edge.
+    ports:
+      - "127.0.0.1:8080:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - backend
+
+  # ── Nuxt 3 SSR ─────────────────────────────────────────────────────────────
+  nuxt:
+    build:
+      context: ..
+      dockerfile: deploy/docker/Dockerfile.nuxt
+      args:
+        # Public API base baked into the client bundle at build time.
+        NUXT_PUBLIC_API_BASE: ${NUXT_PUBLIC_API_BASE:-https://api.aakashrealtor.com/api/v1}
+    image: aakash/nuxt:latest
+    restart: unless-stopped
+    env_file:
+      - ./env/nuxt.env.production
+    # Published only to localhost; the host nginx proxies aakashrealtor.com here.
+    ports:
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - backend
+
+  # ── Queue workers + scheduler (supervisord) ────────────────────────────────
+  # Same image as `api`; overrides the command to run supervisord, which manages
+  # `queue:work` workers and `schedule:work`. See docker/supervisord.conf.
+  worker:
+    <<: *api-common
+    build: *api-build
+    user: root                              # supervisord drops to www-data per-program
+    command: ["/sbin/tini", "--", "supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+    volumes:
+      - ./docker/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+      - storage:/var/www/html/storage
+    # No ports. Install supervisor at runtime via an entrypoint? No — bake it in.
+    # NOTE: supervisor is added to the api image; see Dockerfile note in RUNBOOK.
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f 'queue:work' >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  pgdata:        # PostgreSQL data — back this up (see backup/db-backup.sh)
+  redisdata:     # Redis AOF persistence
+  storage:       # Laravel storage/ (logs + local-disk media when MEDIA_DISK=public)
+
+networks:
+  backend:
+    driver: bridge

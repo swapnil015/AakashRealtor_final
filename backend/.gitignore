@@ -1,0 +1,40 @@
+# Dependencies
+/vendor
+/node_modules
+composer.phar
+
+# Environment / secrets
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+.phpunit.cache
+
+# Laravel runtime
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/bootstrap/cache/*.php
+
+# Local SQLite database (dev)
+/database/*.sqlite
+/database/*.sqlite-journal
+
+# Published vendor assets (regenerate with `php artisan filament:assets`)
+/public/css/filament
+/public/js/filament
+
+# Logs
+/storage/logs/*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+/.idea
+/.vscode
+*.swp
+Homestead.json
+Homestead.yaml
+auth.json

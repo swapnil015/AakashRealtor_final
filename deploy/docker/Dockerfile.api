@@ -1,0 +1,129 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  Dockerfile.api — Aakash Realtor Laravel 11 API (PHP 8.2 FPM)
+#
+#  Multi-stage build:
+#    Stage 1 (vendor)  : composer:2 installs production PHP dependencies.
+#    Stage 2 (runtime) : php:8.2-fpm-alpine with the extensions Laravel needs,
+#                        opcache tuned for production, running as a non-root user.
+#
+#  The image bundles ONLY the application + vendor. nginx runs in a separate
+#  container (see docker/nginx/api.conf) and talks to php-fpm over TCP :9000.
+#
+#  Build context is the repo root ("D:\Aakash Realtor"); compose sets it.
+#    docker build -f deploy/docker/Dockerfile.api -t aakash/api:latest .
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+# ===== Stage 1: Composer dependencies =======================================
+# Pin composer:2 so the resolver behaviour is reproducible across builds.
+FROM composer:2 AS vendor
+
+WORKDIR /app
+
+# Copy only the dependency manifests first so this layer is cached and only
+# re-runs when composer.json / composer.lock actually change.
+COPY backend/composer.json backend/composer.lock ./
+
+# Install production dependencies.
+#   --no-dev          : skip phpunit/pest/pint etc. (smaller, safer image)
+#   --no-scripts      : artisan isn't available yet (no app code copied) — we
+#                       run package:discover later in the runtime stage.
+#   --prefer-dist     : faster, uses zip archives.
+#   --no-autoloader   : defer autoloader dump until full source is present.
+RUN composer install \
+        --no-dev \
+        --no-scripts \
+        --no-autoloader \
+        --prefer-dist \
+        --no-interaction \
+        --no-progress
+
+# Now bring in the full application source and generate the optimized,
+# classmap-authoritative autoloader (fastest class lookups in production).
+COPY backend/ ./
+RUN composer dump-autoload --optimize --classmap-authoritative --no-dev
+
+
+# ===== Stage 2: Runtime (php-fpm) ===========================================
+FROM php:8.2-fpm-alpine AS runtime
+
+# Build-time deps live in a virtual package we delete at the end to keep the
+# final image lean. Runtime libs (libpq, libpng, etc.) are kept.
+RUN set -eux; \
+    apk add --no-cache \
+        libpq \
+        libpng \
+        libjpeg-turbo \
+        freetype \
+        libzip \
+        icu-libs \
+        oniguruma \
+        # tini = tiny init for correct PID-1 signal handling
+        tini \
+        # fcgi ships cgi-fcgi, used by the php-fpm healthcheck below
+        fcgi \
+        # supervisor manages the queue workers + scheduler in the "worker"
+        # service (same image, different command). Harmless for the api/fpm use.
+        supervisor; \
+    # supervisord writes its socket/run dir here; make it world-usable so the
+    # worker container can run supervisord as root and drop to www-data.
+    mkdir -p /etc/supervisor/conf.d /var/log/supervisor; \
+    apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
+        postgresql-dev \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        freetype-dev \
+        libzip-dev \
+        icu-dev \
+        oniguruma-dev; \
+    # gd with jpeg + freetype for Intervention/Image thumbnailing
+    docker-php-ext-configure gd --with-freetype --with-jpeg; \
+    docker-php-ext-install -j"$(nproc)" \
+        pdo_pgsql \
+        gd \
+        zip \
+        intl \
+        mbstring \
+        bcmath \
+        opcache \
+        pcntl; \
+    # phpredis from PECL (queue/cache/session on Redis in production)
+    pecl install redis; \
+    docker-php-ext-enable redis; \
+    # Drop the build toolchain — keeps the runtime image small.
+    apk del .build-deps
+
+# ── Production php / opcache / fpm tuning ───────────────────────────────────
+# Start from the upstream production php.ini, then layer our overrides.
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+COPY deploy/docker/php/opcache.ini      "$PHP_INI_DIR/conf.d/zz-opcache.ini"
+COPY deploy/docker/php/php-prod.ini     "$PHP_INI_DIR/conf.d/zz-php-prod.ini"
+COPY deploy/docker/php/www.conf         /usr/local/etc/php-fpm.d/zz-www.conf
+
+WORKDIR /var/www/html
+
+# Copy the application (with vendor + optimized autoloader) from the build stage.
+# www-data (uid/gid 82 on alpine) is the user php-fpm already runs workers as.
+COPY --chown=www-data:www-data --from=vendor /app /var/www/html
+
+# Laravel must be able to write to storage/ and bootstrap/cache/.
+RUN set -eux; \
+    mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache; \
+    chown -R www-data:www-data storage bootstrap/cache; \
+    chmod -R ug+rwX storage bootstrap/cache
+
+# Run as the unprivileged www-data user — never as root in production.
+USER www-data
+
+EXPOSE 9000
+
+# Healthcheck: ask php-fpm's own /ping endpoint over FastCGI (defined in www.conf).
+# Returns "pong" when the worker pool is alive.
+HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=3 \
+    CMD REQUEST_METHOD=GET SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping \
+        cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1
+
+# tini reaps zombies and forwards signals so php-fpm stops cleanly.
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["php-fpm"]

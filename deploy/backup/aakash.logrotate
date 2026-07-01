@@ -1,0 +1,36 @@
+# ═════════════════════════════════════════════════════════════════════════════
+#  aakash.logrotate — logrotate config for host-side Aakash logs
+#
+#  Install:  sudo cp deploy/backup/aakash.logrotate /etc/logrotate.d/aakash
+#  Test:     sudo logrotate -d /etc/logrotate.d/aakash      (dry run)
+#
+#  NOTE: container stdout/stderr (php-fpm, queue workers, nginx, nuxt) is handled
+#  by the Docker logging driver — cap it in /etc/docker/daemon.json instead:
+#      { "log-driver": "json-file", "log-opts": { "max-size": "10m", "max-file": "5" } }
+#  This logrotate covers the HOST-written logs (cron, backups, host nginx).
+# ═════════════════════════════════════════════════════════════════════════════
+
+/var/log/aakash/*.log {
+    daily
+    rotate 14
+    missingok
+    notifempty
+    compress
+    delaycompress
+    copytruncate          # don't break long-running writers that hold the fd
+    su root root
+}
+
+# Host nginx access/error logs (TLS terminator).
+/var/log/nginx/*.log {
+    daily
+    rotate 30
+    missingok
+    notifempty
+    compress
+    delaycompress
+    sharedscripts
+    postrotate
+        [ -f /var/run/nginx.pid ] && kill -USR1 "$(cat /var/run/nginx.pid)"
+    endscript
+}

@@ -1,0 +1,27 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  Root .gitignore — protects deploy secrets and ignores common build cruft.
+#  Per-app .gitignore files (backend/, frontend/) still apply on top of this.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Deploy secrets — NEVER commit the real production env files ──────────────
+# Only the *.example templates are tracked.
+deploy/env/*.env.production
+deploy/env/api.env.production
+deploy/env/nuxt.env.production
+!deploy/env/*.example
+
+# Any stray .env at any level.
+.env
+*.env.local
+
+# ── OS / editor noise ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# ── Logs / backups produced locally ──────────────────────────────────────────
+*.log
+deploy/backup/*.dump.gz
+deploy/backup/*.tgz
