@@ -101,13 +101,13 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container-px pb-24 pt-28">
-    <header class="mb-8">
-      <p class="eyebrow">{{ pagination?.total ?? 0 }} listings</p>
-      <h1 class="mt-2 font-display text-5xl font-semibold tracking-tight">{{ heading }}</h1>
+  <div class="mx-auto max-w-shell px-margin-mobile pb-24 pt-10 md:px-margin-desktop">
+    <header class="mb-8 border-b border-outline-variant pb-6">
+      <p class="eyebrow mb-2">{{ pagination?.total ?? 0 }} Properties Found</p>
+      <h1 class="font-display text-headline-md text-primary md:text-display-lg-mobile">{{ heading }}</h1>
     </header>
 
-    <div class="grid gap-8 lg:grid-cols-[300px_1fr]">
+    <div class="grid gap-content-gap lg:grid-cols-[280px_1fr]">
       <FilterSidebar
         v-if="refs"
         v-model="filters"
@@ -120,30 +120,30 @@ useSeoMeta({
       />
 
       <div>
-        <div class="mb-6 flex items-center justify-between">
-          <span class="text-sm text-muted">
+        <div class="mb-6 flex items-center justify-between border-b border-outline-variant pb-3">
+          <span class="font-sans text-label-caps uppercase tracking-[0.1em] text-outline">
             Showing {{ pagination?.from ?? 0 }}–{{ pagination?.to ?? 0 }} of {{ pagination?.total ?? 0 }}
           </span>
-          <select v-model="sort" class="field max-w-[200px]">
-            <option value="newest">Newest first</option>
-            <option value="price_asc">Price: low to high</option>
-            <option value="price_desc">Price: high to low</option>
-            <option value="popular">Most popular</option>
+          <select v-model="sort" class="border-0 bg-transparent font-sans text-label-caps uppercase tracking-[0.1em] text-primary outline-none">
+            <option value="newest">Sort: Newest</option>
+            <option value="price_asc">Sort: Price ↑</option>
+            <option value="price_desc">Sort: Price ↓</option>
+            <option value="popular">Sort: Popular</option>
           </select>
         </div>
 
-        <div v-if="pending" class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          <div v-for="n in 6" :key="n" class="h-80 animate-pulse rounded-2xl bg-sand" />
+        <div v-if="pending" class="grid gap-x-gutter gap-y-content-gap sm:grid-cols-2 xl:grid-cols-3">
+          <div v-for="n in 6" :key="n" class="aspect-[4/3] animate-pulse bg-surface-container" />
         </div>
 
-        <div v-else-if="properties.length" class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div v-else-if="properties.length" class="grid gap-x-gutter gap-y-content-gap sm:grid-cols-2 xl:grid-cols-3">
           <PropertyCard v-for="p in properties" :key="p.id" :property="p" />
         </div>
 
-        <div v-else class="rounded-2xl border border-dashed border-slate-300 bg-white p-16 text-center">
-          <p class="font-display text-2xl">No properties match these filters.</p>
-          <p class="mt-2 text-muted">Try widening your search, or post a requirement.</p>
-          <NuxtLink to="/requirements" class="btn-gold mt-6">Post a Requirement</NuxtLink>
+        <div v-else class="border border-outline-variant bg-surface-container-lowest p-16 text-center">
+          <p class="font-display text-headline-sm text-primary">No properties match these filters.</p>
+          <p class="mt-2 font-sans text-body-md text-on-surface-variant">Try widening your search, or post a requirement.</p>
+          <NuxtLink to="/requirements" class="btn-primary mt-6">Post a Requirement</NuxtLink>
         </div>
 
         <Pagination v-if="pagination" :pagination="pagination" @change="goPage" />
