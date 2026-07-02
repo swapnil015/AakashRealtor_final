@@ -6,7 +6,6 @@ const auth = useAuthStore()
 const route = useRoute()
 const api = useApi()
 
-const scrolled = ref(false)
 const mobileOpen = ref(false)
 const megaOpen = ref<null | 'buy' | 'rent'>(null)
 
@@ -22,24 +21,8 @@ const { data: nav } = await useAsyncData('header-nav', async () => {
 const categories = computed(() => nav.value?.categories ?? [])
 const cities = computed(() => nav.value?.cities ?? [])
 
-// transparent over hero on home, solid elsewhere / once scrolled.
-const transparent = computed(() => route.path === '/' && !scrolled.value)
+watch(() => route.fullPath, () => { mobileOpen.value = false; megaOpen.value = null })
 
-function onScroll() {
-  scrolled.value = window.scrollY > 36
-}
-onMounted(() => {
-  onScroll()
-  window.addEventListener('scroll', onScroll, { passive: true })
-})
-onUnmounted(() => window.removeEventListener('scroll', onScroll))
-
-watch(() => route.fullPath, () => {
-  mobileOpen.value = false
-  megaOpen.value = null
-})
-
-// Build a listing URL: /buyHouse/Kathmandu-53
 function listingUrl(txn: 'buy' | 'rent', cat: Category, city?: City) {
   const seg = `${txn}${cat.name.replace(/\s+/g, '')}`
   return city ? `/${seg}/${city.url_token}` : `/${seg}`
@@ -52,85 +35,68 @@ async function doLogout() {
 </script>
 
 <template>
-  <header
-    class="fixed inset-x-0 top-0 z-50 transition-all duration-300 ease-smooth"
-    :class="transparent
-      ? 'py-5 bg-transparent'
-      : 'py-3 bg-canvas/85 backdrop-blur-xl shadow-[0_6px_26px_-14px_rgba(15,23,42,.3)]'"
-    @mouseleave="megaOpen = null"
-  >
-    <div class="container-px flex items-center gap-6">
-      <!-- Logo -->
-      <NuxtLink to="/" class="flex items-center gap-3 shrink-0">
-        <span class="grid h-10 w-10 place-items-center rounded-[10px] bg-gold font-display text-xl font-bold text-ink">A</span>
-        <span class="font-display text-xl font-bold tracking-wide"
-              :class="transparent ? 'text-white' : 'text-ink'">AAKASH REALTOR</span>
+  <header class="sticky top-0 z-50 w-full border-b border-outline-variant bg-surface" @mouseleave="megaOpen = null">
+    <div class="mx-auto flex max-w-shell items-center justify-between px-margin-mobile py-4 md:px-margin-desktop">
+      <!-- Wordmark -->
+      <NuxtLink to="/" class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary md:hidden">menu</span>
+        <span class="font-display text-headline-md uppercase tracking-tight text-primary">Aakash Realtor</span>
       </NuxtLink>
 
       <!-- Desktop nav -->
-      <nav class="ml-2 hidden items-center gap-1 lg:flex"
-           :class="transparent ? 'text-white' : 'text-ink'">
-        <button
-          v-for="t in (['buy','rent'] as const)" :key="t"
-          class="nav-underline px-3 py-2 text-sm font-semibold capitalize transition hover:text-gold"
-          @mouseenter="megaOpen = t"
-        >{{ t }}</button>
-        <NuxtLink to="/exclusive" class="nav-underline px-3 py-2 text-sm font-semibold transition hover:text-gold">Exclusive</NuxtLink>
-        <NuxtLink to="/about" class="nav-underline px-3 py-2 text-sm font-semibold transition hover:text-gold">About</NuxtLink>
-        <NuxtLink to="/tools/emi" class="nav-underline px-3 py-2 text-sm font-semibold transition hover:text-gold">Tools</NuxtLink>
-        <NuxtLink to="/contact" class="nav-underline px-3 py-2 text-sm font-semibold transition hover:text-gold">Contact</NuxtLink>
+      <nav class="hidden items-center gap-8 md:flex">
+        <NuxtLink to="/" class="font-sans text-label-caps uppercase tracking-[0.1em] text-on-surface-variant transition-colors hover:text-secondary"
+          :class="route.path === '/' && 'border-b-2 border-primary text-primary'">Home</NuxtLink>
+        <button class="font-sans text-label-caps uppercase tracking-[0.1em] text-on-surface-variant transition-colors hover:text-secondary" @mouseenter="megaOpen = 'buy'">Buy</button>
+        <button class="font-sans text-label-caps uppercase tracking-[0.1em] text-on-surface-variant transition-colors hover:text-secondary" @mouseenter="megaOpen = 'rent'">Rent</button>
+        <NuxtLink to="/exclusive" class="font-sans text-label-caps uppercase tracking-[0.1em] text-on-surface-variant transition-colors hover:text-secondary">Invest</NuxtLink>
+        <NuxtLink to="/about" class="font-sans text-label-caps uppercase tracking-[0.1em] text-on-surface-variant transition-colors hover:text-secondary">About</NuxtLink>
+        <NuxtLink to="/tools/emi" class="font-sans text-label-caps uppercase tracking-[0.1em] text-on-surface-variant transition-colors hover:text-secondary">Tools</NuxtLink>
+        <NuxtLink to="/contact" class="font-sans text-label-caps uppercase tracking-[0.1em] text-on-surface-variant transition-colors hover:text-secondary">Contact</NuxtLink>
       </nav>
 
-      <!-- Right -->
-      <div class="ml-auto flex items-center gap-3"
-           :class="transparent ? 'text-white' : 'text-ink'">
+      <!-- Right side -->
+      <div class="flex items-center gap-3">
         <template v-if="auth.isLoggedIn">
-          <NuxtLink to="/dashboard" class="hidden text-sm font-semibold transition hover:text-gold sm:block">
+          <NuxtLink to="/dashboard" class="hidden font-sans text-label-caps uppercase tracking-[0.1em] text-primary hover:text-secondary sm:block">
             {{ auth.user?.name?.split(' ')[0] || 'Account' }}
           </NuxtLink>
-          <button class="hidden text-sm font-semibold transition hover:text-gold sm:block" @click="doLogout">Log out</button>
+          <button class="hidden font-sans text-label-caps uppercase tracking-[0.1em] text-on-surface-variant hover:text-secondary sm:block" @click="doLogout">Log out</button>
+          <NuxtLink to="/post" class="border border-primary px-4 py-2 font-sans text-label-caps uppercase tracking-[0.1em] text-primary transition-all hover:bg-primary hover:text-surface">Post</NuxtLink>
         </template>
         <template v-else>
-          <NuxtLink to="/login" class="hidden text-sm font-semibold transition hover:text-gold sm:block">Log in</NuxtLink>
+          <NuxtLink to="/login" class="border border-primary px-4 py-2 font-sans text-label-caps uppercase tracking-[0.1em] text-primary transition-all hover:bg-primary hover:text-surface">
+            Login / Register
+          </NuxtLink>
         </template>
-        <NuxtLink v-magnetic="0.35" to="/post" class="hidden rounded-xl bg-gold px-5 py-3 text-sm font-bold text-ink shadow-sm transition-shadow hover:shadow-gold sm:inline-flex">
-          + Post Property
-        </NuxtLink>
-        <!-- Mobile toggle -->
-        <button class="lg:hidden" aria-label="Menu" @click="mobileOpen = !mobileOpen">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round" />
-          </svg>
+        <button class="md:hidden" aria-label="Menu" @click="mobileOpen = !mobileOpen">
+          <span class="material-symbols-outlined text-primary">{{ mobileOpen ? 'close' : 'menu' }}</span>
         </button>
       </div>
     </div>
 
     <!-- Mega-menu (category × city) -->
     <Transition name="page">
-      <div v-if="megaOpen" class="absolute inset-x-0 top-full hidden lg:block"
-           @mouseenter="() => {}">
-        <div class="container-px pt-2">
-          <div class="grid grid-cols-12 gap-8 rounded-2xl border border-slate-200 bg-white p-8 shadow-lift">
-            <div class="col-span-5">
-              <div class="eyebrow mb-4">{{ megaOpen === 'buy' ? 'Buy by category' : 'Rent by category' }}</div>
-              <div class="grid grid-cols-2 gap-2">
-                <NuxtLink v-for="c in categories" :key="c.id" :to="listingUrl(megaOpen, c)"
-                  class="rounded-lg px-3 py-2.5 text-sm font-semibold text-ink transition hover:bg-sand hover:text-gold-hover">
-                  {{ c.name }}
-                  <span v-if="c.properties_count" class="ml-1 text-xs font-medium text-muted">{{ c.properties_count }}</span>
-                </NuxtLink>
-              </div>
+      <div v-if="megaOpen" class="absolute inset-x-0 top-full hidden border-t border-outline-variant bg-surface md:block" @mouseenter="() => {}">
+        <div class="mx-auto grid max-w-shell grid-cols-12 gap-content-gap px-margin-desktop py-8">
+          <div class="col-span-5">
+            <p class="eyebrow mb-4">{{ megaOpen === 'buy' ? 'Buy by category' : 'Rent by category' }}</p>
+            <div class="grid grid-cols-2 gap-1">
+              <NuxtLink v-for="c in categories" :key="c.id" :to="listingUrl(megaOpen, c)"
+                class="flex items-center justify-between px-2 py-2 font-sans text-body-md text-primary transition-colors hover:text-secondary">
+                <span>{{ c.name }}</span>
+                <span v-if="c.properties_count" class="font-sans text-technical-data text-on-surface-variant">{{ c.properties_count }}</span>
+              </NuxtLink>
             </div>
-            <div class="col-span-7 border-l border-slate-100 pl-8">
-              <div class="eyebrow mb-4">Popular cities</div>
-              <div class="grid grid-cols-2 gap-2">
-                <NuxtLink v-for="city in cities" :key="city.id"
-                  :to="`/${megaOpen}House/${city.url_token}`"
-                  class="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-semibold text-ink transition hover:bg-sand hover:text-gold-hover">
-                  <span>{{ city.name }}</span>
-                  <span class="text-xs font-medium text-muted">{{ city.properties_count ?? '' }}</span>
-                </NuxtLink>
-              </div>
+          </div>
+          <div class="col-span-7 border-l border-outline-variant pl-8">
+            <p class="eyebrow mb-4">Popular cities</p>
+            <div class="grid grid-cols-2 gap-1">
+              <NuxtLink v-for="city in cities" :key="city.id" :to="`/${megaOpen}House/${city.url_token}`"
+                class="flex items-center justify-between px-2 py-2 font-sans text-body-md text-primary transition-colors hover:text-secondary">
+                <span>{{ city.name }}</span>
+                <span class="font-sans text-technical-data text-on-surface-variant">{{ city.properties_count ?? '' }}</span>
+              </NuxtLink>
             </div>
           </div>
         </div>
@@ -139,17 +105,17 @@ async function doLogout() {
 
     <!-- Mobile drawer -->
     <Transition name="page">
-      <div v-if="mobileOpen" class="container-px mt-3 lg:hidden">
-        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-lift">
+      <div v-if="mobileOpen" class="border-t border-outline-variant bg-surface md:hidden">
+        <div class="px-margin-mobile py-4">
           <NuxtLink v-for="c in categories" :key="c.id" :to="listingUrl('buy', c)"
-            class="block rounded-lg px-3 py-2.5 text-sm font-semibold text-ink hover:bg-sand">Buy {{ c.name }}</NuxtLink>
-          <hr class="my-2 border-slate-100" />
-          <NuxtLink to="/exclusive" class="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-sand">Exclusive</NuxtLink>
-          <NuxtLink to="/about" class="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-sand">About</NuxtLink>
-          <NuxtLink to="/tools/emi" class="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-sand">Tools</NuxtLink>
-          <NuxtLink to="/contact" class="block rounded-lg px-3 py-2.5 text-sm font-semibold hover:bg-sand">Contact</NuxtLink>
-          <NuxtLink to="/post" class="mt-2 block rounded-xl bg-gold px-3 py-3 text-center text-sm font-bold text-ink">+ Post Property</NuxtLink>
-          <NuxtLink v-if="!auth.isLoggedIn" to="/login" class="mt-1 block rounded-lg px-3 py-2.5 text-center text-sm font-semibold">Log in</NuxtLink>
+            class="block py-2.5 font-sans text-body-md text-primary">Buy {{ c.name }}</NuxtLink>
+          <hr class="my-2 border-outline-variant" />
+          <NuxtLink to="/exclusive" class="block py-2.5 font-sans text-body-md text-primary">Invest</NuxtLink>
+          <NuxtLink to="/about" class="block py-2.5 font-sans text-body-md text-primary">About</NuxtLink>
+          <NuxtLink to="/tools/emi" class="block py-2.5 font-sans text-body-md text-primary">Tools</NuxtLink>
+          <NuxtLink to="/contact" class="block py-2.5 font-sans text-body-md text-primary">Contact</NuxtLink>
+          <NuxtLink to="/post" class="mt-3 block bg-primary py-3 text-center font-sans text-label-caps uppercase tracking-[0.1em] text-surface">Post Property</NuxtLink>
+          <NuxtLink v-if="!auth.isLoggedIn" to="/login" class="mt-2 block border border-primary py-3 text-center font-sans text-label-caps uppercase tracking-[0.1em] text-primary">Login / Register</NuxtLink>
         </div>
       </div>
     </Transition>

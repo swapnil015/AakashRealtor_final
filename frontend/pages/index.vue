@@ -5,7 +5,7 @@ const api = useApi()
 
 // Hero scroll parallax (image drifts slower than the page).
 const { y: scrollY } = useWindowScroll()
-const heroParallax = computed(() => `translateY(${scrollY.value * 0.16}px)`)
+const heroParallax = computed(() => `scale(${1 + scrollY.value * 0.0004})`)
 
 // Search bar state.
 const txn = ref<'buy' | 'rent'>('buy')
@@ -17,7 +17,7 @@ const { data } = await useAsyncData('home', async () => {
   const [featured, exclusive, latest, emerging, byOwner, cats, cities, faqs] = await Promise.all([
     api.get<Property[]>('/properties/featured', { per_page: 4 }),
     api.get<Property[]>('/properties/exclusive', { per_page: 3 }),
-    api.get<Property[]>('/properties', { sort: 'newest', per_page: 8 }),
+    api.get<Property[]>('/properties', { sort: 'newest', per_page: 9 }),
     api.get<Property[]>('/properties/emerging', { per_page: 4 }),
     api.get<Property[]>('/properties/by-owner', { per_page: 4 }),
     api.get<Category[]>('/categories'),
@@ -41,156 +41,145 @@ function runSearch() {
 const openFaq = ref<number | null>(0)
 
 useSeoMeta({
-  title: 'Find a home that lives up to you',
+  title: 'Timeless Assets for the Discerning Collector',
   description:
-    "Aakash Realtor — Nepal's curated property marketplace. Hand-verified villas, apartments and land across the Kathmandu valley, every listing checked against its lalpurja.",
-  ogTitle: 'Aakash Realtor — Nepal Property Marketplace',
+    "Aakash Realtor — Nepal's definitive marketplace for luxury real estate and land assets. Every listing verified against its lalpurja.",
+  ogTitle: 'Aakash Realtor — Timeless Assets',
 })
 </script>
 
 <template>
   <div>
     <!-- ───────────── HERO ───────────── -->
-    <section class="relative flex min-h-[92vh] items-center overflow-hidden">
-      <div class="absolute -inset-[8%] bg-ink will-change-transform" :style="{ transform: heroParallax }">
-        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80"
-             alt="" class="kenburns h-full w-full object-cover opacity-70" />
-      </div>
-      <div class="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/60 to-ink/20" />
-
-      <div class="container-px relative w-full pt-24">
-        <div class="max-w-2xl text-white">
-          <p class="eyebrow animate-fade-up">Nepal's Curated Property Collection</p>
-          <h1 class="mt-5 font-display text-5xl font-semibold leading-[1.02] animate-fade-up sm:text-7xl"
-              style="animation-delay:.1s">
-            Find a home that<br />lives up to you.
+    <section class="relative h-[620px] w-full overflow-hidden sm:h-[751px]">
+      <div class="absolute inset-0 bg-cover bg-center will-change-transform" :style="{
+        backgroundImage: `url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80')`,
+        transform: heroParallax,
+      }" />
+      <div class="editorial-overlay absolute inset-0 flex flex-col justify-end px-margin-mobile pb-16 md:px-margin-desktop">
+        <div class="mx-auto w-full max-w-shell">
+          <p class="mb-3 font-sans text-label-caps uppercase tracking-[0.2em] text-surface-container-lowest">Curated Excellence</p>
+          <h1 class="max-w-3xl font-display text-display-lg-mobile leading-tight text-surface md:text-display-lg">
+            Timeless Assets for the Discerning Collector
           </h1>
-          <p class="mt-5 max-w-lg text-lg leading-relaxed text-white/80 animate-fade-up" style="animation-delay:.2s">
-            Hand-verified villas, apartments and land across the Kathmandu valley — every listing
-            checked against its lalpurja.
-          </p>
 
-          <!-- Search bar -->
-          <div class="mt-8 animate-fade-up rounded-2xl bg-white/95 p-3 shadow-lift backdrop-blur sm:p-4"
-               style="animation-delay:.3s">
-            <div class="mb-3 inline-flex rounded-lg bg-sand p-1">
+          <!-- Search panel -->
+          <div class="mt-8 max-w-3xl border border-outline-variant bg-surface/95 p-4 backdrop-blur-md">
+            <div class="mb-3 flex gap-2">
               <button v-for="t in (['buy','rent'] as const)" :key="t"
-                class="rounded-md px-5 py-2 text-sm font-bold capitalize transition"
-                :class="txn === t ? 'bg-gold text-ink' : 'text-muted'"
+                class="border px-5 py-2 font-sans text-label-caps uppercase tracking-[0.1em] transition-colors"
+                :class="txn === t ? 'border-primary bg-primary text-surface' : 'border-outline-variant text-primary'"
                 @click="txn = t">{{ t }}</button>
             </div>
             <div class="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
-              <select v-model="searchCategory" class="field text-ink">
-                <option value="">Property type</option>
+              <select v-model="searchCategory" class="border border-outline-variant bg-surface-container-lowest px-3 py-3 font-sans text-body-md text-primary outline-none focus:border-primary">
+                <option value="">Asset type</option>
                 <option v-for="c in data?.categories" :key="c.id" :value="c.slug">{{ c.name }}</option>
               </select>
-              <select v-model="searchCity" class="field text-ink">
-                <option value="">All cities</option>
+              <select v-model="searchCity" class="border border-outline-variant bg-surface-container-lowest px-3 py-3 font-sans text-body-md text-primary outline-none focus:border-primary">
+                <option value="">All locations</option>
                 <option v-for="c in data?.cities" :key="c.id" :value="String(c.public_id)">{{ c.name }}</option>
               </select>
-              <button class="btn-gold whitespace-nowrap" @click="runSearch">Search</button>
-            </div>
-          </div>
-
-          <!-- Stats (count up when they enter view) -->
-          <div class="mt-10 flex gap-10 animate-fade-up" style="animation-delay:.4s">
-            <div v-for="s in [
-              { to: 2800, suffix: '+', label: 'Verified listings' },
-              { to: 18, suffix: ' yrs', label: 'In the valley' },
-              { to: 100, suffix: '%', label: 'Lalpurja checked' },
-            ]" :key="s.label">
-              <div v-count="{ to: s.to, suffix: s.suffix }" class="font-display text-3xl font-semibold">{{ s.to }}{{ s.suffix }}</div>
-              <div class="mt-1 text-[13px] text-white/60">{{ s.label }}</div>
+              <button class="btn-primary whitespace-nowrap" @click="runSearch">
+                <span class="material-symbols-outlined text-base">search</span> Search
+              </button>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Floating scroll cue -->
-      <div class="absolute bottom-7 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2 text-white/70">
-        <span class="text-[10px] font-semibold uppercase tracking-[0.2em]">Scroll</span>
-        <span class="animate-float text-lg">↓</span>
       </div>
     </section>
 
-    <!-- ───────────── FEATURED ───────────── -->
-    <section class="container-px py-24">
-      <Reveal class="mb-12 flex items-end justify-between">
+    <!-- ───────────── INTENT PILLS ───────────── -->
+    <section class="mx-auto flex max-w-shell gap-4 overflow-x-auto px-margin-mobile py-8 hide-scrollbar md:px-margin-desktop">
+      <NuxtLink v-for="(c, i) in data?.categories?.slice(0, 5)" :key="c.id" :to="`/buy${c.name.replace(/\s+/g,'')}`"
+        class="flex-shrink-0 border px-6 py-2 font-sans text-label-caps uppercase tracking-[0.1em] transition-colors"
+        :class="i === 0 ? 'border-primary bg-primary text-surface' : 'border-outline-variant text-primary hover:border-primary'">
+        {{ c.name }}
+      </NuxtLink>
+    </section>
+
+    <!-- ───────────── LATEST STRATEGIC ASSETS ───────────── -->
+    <section class="mx-auto max-w-shell px-margin-mobile py-section-gap md:px-margin-desktop">
+      <div class="mb-content-gap flex items-end justify-between">
         <div>
-          <p class="eyebrow">Hand-picked this week</p>
-          <h2 class="mt-3 font-display text-5xl font-semibold tracking-tight">Featured Properties</h2>
+          <p class="eyebrow mb-1">New Acquisitions</p>
+          <h2 class="font-display text-headline-md text-primary">Latest Strategic Assets</h2>
         </div>
-        <NuxtLink to="/buyHouse" class="hidden border-b-2 border-gold pb-1 text-sm font-semibold sm:block">
-          View all featured →
-        </NuxtLink>
-      </Reveal>
-      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Reveal v-for="(p, i) in data?.featured" :key="p.id" :delay="i * 0.08">
+        <NuxtLink to="/buyHouse" class="font-sans text-label-caps uppercase tracking-[0.1em] text-primary link-underline">View All</NuxtLink>
+      </div>
+      <div class="grid gap-x-gutter gap-y-content-gap sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal v-for="(p, i) in data?.latest" :key="p.id" :delay="(i % 3) * 0.06">
           <PropertyCard :property="p" />
         </Reveal>
       </div>
-      <p v-if="!data?.featured?.length" class="text-muted">No featured properties yet.</p>
+      <p v-if="!data?.latest?.length" class="font-sans text-body-md text-on-surface-variant">No listings yet.</p>
     </section>
 
-    <!-- ───────────── EXCLUSIVE (dark) ───────────── -->
-    <section v-if="data?.exclusive?.length" class="bg-ink py-24 text-white">
-      <div class="container-px">
-        <Reveal class="mb-12 text-center">
-          <p class="eyebrow">By invitation</p>
-          <h2 class="mt-3 font-display text-5xl font-semibold tracking-tight text-white">The Exclusive Collection</h2>
-        </Reveal>
-        <div class="grid gap-6 md:grid-cols-3">
-          <Reveal v-for="(p, i) in data.exclusive" :key="p.id" :delay="i * 0.08">
+    <!-- ───────────── FEATURED ───────────── -->
+    <section v-if="data?.featured?.length" class="border-t border-outline-variant bg-surface-container-low">
+      <div class="mx-auto max-w-shell px-margin-mobile py-section-gap md:px-margin-desktop">
+        <div class="mb-content-gap flex items-end justify-between">
+          <div>
+            <p class="eyebrow mb-1">Hand-picked this week</p>
+            <h2 class="font-display text-headline-md text-primary">Featured Properties</h2>
+          </div>
+          <NuxtLink to="/buyHouse" class="font-sans text-label-caps uppercase tracking-[0.1em] text-primary link-underline">View All</NuxtLink>
+        </div>
+        <div class="grid gap-x-gutter gap-y-content-gap sm:grid-cols-2 lg:grid-cols-3">
+          <Reveal v-for="(p, i) in data.featured" :key="p.id" :delay="(i % 3) * 0.06">
+            <PropertyCard :property="p" />
+          </Reveal>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── EXCLUSIVE (dark, invitation-only) ───────────── -->
+    <section v-if="data?.exclusive?.length" class="bg-primary-container">
+      <div class="mx-auto max-w-shell px-margin-mobile py-section-gap md:px-margin-desktop">
+        <div class="mb-content-gap text-center">
+          <h2 class="font-display text-headline-md italic text-surface-container-lowest">Exclusive Invitation-Only</h2>
+          <p class="mx-auto mt-2 max-w-md font-sans text-body-md text-on-primary-container">
+            Off-market opportunities for significant portfolio diversification.
+          </p>
+        </div>
+        <div class="grid gap-x-gutter gap-y-content-gap md:grid-cols-3">
+          <Reveal v-for="(p, i) in data.exclusive" :key="p.id" :delay="i * 0.06">
             <PropertyCard :property="p" dark />
           </Reveal>
         </div>
       </div>
     </section>
 
-    <!-- ───────────── LATEST ───────────── -->
-    <section class="container-px py-24">
-      <Reveal class="mb-12 text-center">
-        <p class="eyebrow">Fresh on the market</p>
-        <h2 class="mt-3 font-display text-5xl font-semibold tracking-tight">Latest Listings</h2>
-      </Reveal>
-      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Reveal v-for="(p, i) in data?.latest" :key="p.id" :delay="(i % 4) * 0.06">
-          <PropertyCard :property="p" />
-        </Reveal>
+    <!-- ───────────── REQUIREMENTS / NEWSLETTER ───────────── -->
+    <section class="border-b border-t border-outline-variant">
+      <div class="mx-auto max-w-editorial px-margin-mobile py-section-gap text-center md:px-margin-desktop">
+        <h2 class="mb-4 font-display text-headline-sm text-primary">तपाईंको सपनाको घर खोज्नुहोस्</h2>
+        <p class="mx-auto mb-8 max-w-md font-sans text-body-md text-on-surface-variant">
+          Join our inner circle for weekly market reports and exclusive property alerts across Nepal.
+        </p>
+        <div class="mx-auto flex max-w-md flex-col gap-3">
+          <NuxtLink to="/requirements" class="btn-primary">Post a Requirement</NuxtLink>
+          <NuxtLink to="/buyHouse" class="btn-outline">Browse All Assets</NuxtLink>
+        </div>
       </div>
     </section>
 
-    <!-- ───────────── REQUIREMENTS TEASER ───────────── -->
-    <section class="container-px pb-24">
-      <Reveal class="overflow-hidden rounded-3xl bg-gradient-to-br from-ink to-ink-soft p-12 text-white sm:p-16">
-        <div class="max-w-xl">
-          <p class="eyebrow">Didn't find it?</p>
-          <h2 class="mt-3 font-display text-4xl font-semibold sm:text-5xl">Tell us what you're looking for.</h2>
-          <p class="mt-4 text-white/75">
-            Post your requirement and we'll alert you the moment a matching, lalpurja-verified
-            property comes to market.
-          </p>
-          <NuxtLink to="/requirements" class="btn-gold mt-7">Post a Requirement</NuxtLink>
-        </div>
-      </Reveal>
-    </section>
-
     <!-- ───────────── FAQ ───────────── -->
-    <section v-if="data?.faqs?.length" class="container-px pb-24">
-      <Reveal class="mx-auto max-w-3xl">
-        <p class="eyebrow text-center">Good to know</p>
-        <h2 class="mt-3 text-center font-display text-5xl font-semibold">Frequently Asked</h2>
-        <div class="mt-10 divide-y divide-slate-200 rounded-2xl border border-slate-200 bg-white">
-          <div v-for="(f, i) in data.faqs" :key="f.id" class="px-6">
-            <button class="flex w-full items-center justify-between py-5 text-left font-semibold"
-                    @click="openFaq = openFaq === i ? null : i">
-              {{ f.question }}
-              <span class="text-gold transition" :class="openFaq === i ? 'rotate-45' : ''">+</span>
-            </button>
-            <p v-show="openFaq === i" class="pb-5 text-muted">{{ f.answer }}</p>
-          </div>
+    <section v-if="data?.faqs?.length" class="mx-auto max-w-editorial px-margin-mobile py-section-gap md:px-margin-desktop">
+      <div class="mb-content-gap text-center">
+        <p class="eyebrow mb-1">Good to know</p>
+        <h2 class="font-display text-headline-md text-primary">Frequently Asked</h2>
+      </div>
+      <div class="mx-auto max-w-3xl border-t border-outline-variant">
+        <div v-for="(f, i) in data.faqs" :key="f.id" class="border-b border-outline-variant">
+          <button class="flex w-full items-center justify-between gap-4 py-5 text-left font-display text-headline-sm text-primary"
+                  @click="openFaq = openFaq === i ? null : i">
+            {{ f.question }}
+            <span class="material-symbols-outlined text-secondary transition-transform" :class="openFaq === i ? 'rotate-45' : ''">add</span>
+          </button>
+          <p v-show="openFaq === i" class="pb-5 font-sans text-body-md text-on-surface-variant">{{ f.answer }}</p>
         </div>
-      </Reveal>
+      </div>
     </section>
   </div>
 </template>

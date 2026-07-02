@@ -10,63 +10,76 @@ const img = computed(
     || null,
 )
 
-const tag = computed(() => {
-  const f = props.property.flags
-  if (f.is_exclusive) return 'Exclusive'
-  if (f.is_featured) return 'Featured'
-  if (f.is_emerging) return 'Emerging'
-  if (f.is_open_house) return 'Open House'
-  if (f.is_by_owner) return 'By Owner'
-  return props.property.transaction_type === 'rent' ? 'For Rent' : 'For Sale'
-})
+// Nepali rupee glyph to match the editorial design (frontend-only presentation).
+const price = computed(() => (props.property.price.formatted || '').replace(/^Rs\.?/i, 'रू'))
 
-const specLine = computed(() => {
+const areaText = computed(() => {
+  const a = props.property.area
+  return a?.size ? `${a.size} ${a.unit}` : '—'
+})
+const roadText = computed(() => {
   const s = props.property.specs
-  const parts: string[] = []
-  if (s.bedrooms) parts.push(`${s.bedrooms} Bd`)
-  if (s.bathrooms) parts.push(`${s.bathrooms} Ba`)
-  if (props.property.area.size) parts.push(`${props.property.area.size} ${props.property.area.unit}`)
-  return parts.join(' · ')
+  if (s?.road_width) return `${s.road_width} ft`
+  if (s?.facing) return s.facing
+  return '—'
+})
+const statusText = computed(() => {
+  const st = props.property.status
+  if (st === 'active') return 'Available'
+  if (st === 'sold') return 'Sold'
+  if (st === 'rented') return 'Rented'
+  return st
+})
+const location = computed(() => {
+  const l = props.property.location
+  return [l?.area?.name, l?.city?.name].filter(Boolean).join(', ') || 'Nepal'
 })
 </script>
 
 <template>
-  <NuxtLink
-    :to="property.url"
-    class="group block overflow-hidden rounded-2xl border transition-all duration-300 ease-smooth hover:-translate-y-1.5"
-    :class="dark
-      ? 'border-ink-line bg-ink-soft hover:border-gold hover:shadow-[0_34px_60px_-34px_rgba(0,0,0,.7)]'
-      : 'border-[#EFEDE7] bg-white hover:shadow-lift'"
-  >
-    <div class="relative h-56 overflow-hidden">
+  <NuxtLink :to="property.url" class="group block">
+    <div class="aspect-[16/9] overflow-hidden">
       <img v-if="img" :src="img" :alt="property.title" loading="lazy"
-           class="h-full w-full object-cover transition-transform duration-[900ms] ease-smooth group-hover:scale-[1.09]" />
-      <div v-else class="grid h-full w-full place-items-center bg-sand text-muted">No image</div>
-
-      <!-- Gradient wash that deepens on hover for text legibility + depth. -->
-      <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent opacity-60 transition-opacity duration-500 group-hover:opacity-90" />
-
-      <span class="absolute left-3 top-3 z-10 rounded-full bg-ink/80 px-3 py-1.5 text-[10.5px] font-bold uppercase tracking-wider text-white backdrop-blur transition-transform duration-300 ease-smooth group-hover:-translate-y-0.5">
-        {{ tag }}
-      </span>
-      <span v-if="!dark" class="absolute bottom-3 left-3 z-10 rounded-lg bg-white/95 px-3 py-2 text-base font-bold text-ink">
-        {{ property.price.formatted }}
-      </span>
+           class="h-full w-full object-cover transition-transform duration-700 ease-smooth group-hover:scale-105" />
+      <div v-else class="grid h-full w-full place-items-center"
+           :class="dark ? 'bg-primary-container text-on-primary-container' : 'bg-surface-container text-on-surface-variant'">
+        <span class="material-symbols-outlined text-4xl">image</span>
+      </div>
     </div>
 
-    <div class="p-5">
-      <h3 class="font-display text-2xl font-semibold leading-tight" :class="dark ? 'text-white' : 'text-ink'">
-        {{ property.title }}
-      </h3>
-      <div class="mt-1 text-sm font-medium" :class="dark ? 'text-slate-400' : 'text-muted'">
-        📍 {{ property.location.area?.name ? property.location.area.name + ', ' : '' }}{{ property.location.city?.name }}
+    <div class="mt-4 flex items-start justify-between gap-4">
+      <div>
+        <h4 class="font-display text-headline-sm italic leading-tight"
+            :class="dark ? 'text-surface' : 'text-primary'">
+          {{ property.title }}
+        </h4>
+        <p class="mt-1 font-sans text-body-md" :class="dark ? 'text-on-primary-container' : 'text-on-surface-variant'">
+          {{ location }}
+        </p>
       </div>
+      <p class="whitespace-nowrap font-display text-headline-sm" :class="dark ? 'text-surface' : 'text-primary'">
+        {{ price }}
+      </p>
+    </div>
 
-      <div class="mt-4 flex items-center justify-between border-t pt-3"
-           :class="dark ? 'border-ink-line' : 'border-[#F1EEE8]'">
-        <span class="text-[12.5px] font-semibold" :class="dark ? 'text-slate-400' : 'text-muted'">{{ specLine }}</span>
-        <span v-if="dark" class="text-lg font-bold text-gold">{{ property.price.formatted }}</span>
-        <span v-else class="translate-x-[-6px] text-[12.5px] font-bold text-gold-hover opacity-0 transition-all duration-300 ease-smooth group-hover:translate-x-0 group-hover:opacity-100">View →</span>
+    <!-- Technical data grid -->
+    <div class="mt-4 grid grid-cols-3 border-y py-3"
+         :class="dark ? 'border-on-surface-variant/30' : 'border-outline-variant'">
+      <div class="border-r px-1 text-center" :class="dark ? 'border-on-surface-variant/30' : 'border-outline-variant'">
+        <p class="font-sans text-[10px] font-semibold uppercase tracking-[0.1em]"
+           :class="dark ? 'text-on-primary-container' : 'text-on-surface-variant'">Area</p>
+        <p class="mt-0.5 font-sans text-technical-data" :class="dark ? 'text-surface' : 'text-primary'">{{ areaText }}</p>
+      </div>
+      <div class="border-r px-1 text-center" :class="dark ? 'border-on-surface-variant/30' : 'border-outline-variant'">
+        <p class="font-sans text-[10px] font-semibold uppercase tracking-[0.1em]"
+           :class="dark ? 'text-on-primary-container' : 'text-on-surface-variant'">Road</p>
+        <p class="mt-0.5 font-sans text-technical-data" :class="dark ? 'text-surface' : 'text-primary'">{{ roadText }}</p>
+      </div>
+      <div class="px-1 text-center">
+        <p class="font-sans text-[10px] font-semibold uppercase tracking-[0.1em]"
+           :class="dark ? 'text-on-primary-container' : 'text-on-surface-variant'">Status</p>
+        <p class="mt-0.5 font-sans text-technical-data"
+           :class="dark ? 'text-secondary-container' : 'text-secondary'">{{ statusText }}</p>
       </div>
     </div>
   </NuxtLink>
