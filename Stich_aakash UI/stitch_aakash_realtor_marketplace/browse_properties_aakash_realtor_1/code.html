@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Browse Properties | Aakash Realtor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap');
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+
+        /* Custom Scrollbar for Chips */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Tonal Layering from Style Guidance */
+        .surface-layer { background-color: #fef9f1; }
+        .card-border { border: 1px solid #DED5C6; }
+        
+        /* Typography overrides for technical data spacing */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background-color: #DED5C6;
+        }
+        .tech-cell {
+            background-color: #fef9f1;
+            padding: 4px 8px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fef9f1",
+                        "surface-container": "#f2ede5",
+                        "surface-bright": "#fef9f1",
+                        "on-tertiary-fixed": "#042018",
+                        "primary-fixed-dim": "#ccc5c1",
+                        "surface-variant": "#e7e2da",
+                        "error-container": "#ffdad6",
+                        "surface-dim": "#ded9d2",
+                        "primary-container": "#1e1b19",
+                        "inverse-primary": "#ccc5c1",
+                        "on-background": "#1d1c17",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#5d4213",
+                        "on-tertiary-container": "#6d8a7e",
+                        "tertiary-container": "#042018",
+                        "on-tertiary-fixed-variant": "#314c42",
+                        "on-primary-fixed": "#1e1b19",
+                        "primary": "#000000",
+                        "tertiary-fixed-dim": "#afcdc0",
+                        "outline-variant": "#d0c4be",
+                        "surface-container-low": "#f8f3eb",
+                        "surface-tint": "#625d5b",
+                        "inverse-surface": "#32302b",
+                        "background": "#fef9f1",
+                        "on-surface-variant": "#4d4540",
+                        "on-secondary-fixed": "#281800",
+                        "outline": "#7e7570",
+                        "secondary-container": "#ffd79b",
+                        "on-primary-fixed-variant": "#4a4643",
+                        "tertiary-fixed": "#cbe9dc",
+                        "tertiary": "#000000",
+                        "inverse-on-surface": "#f5f0e8",
+                        "secondary": "#775928",
+                        "on-primary-container": "#89837f",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e7e2da",
+                        "surface-container-high": "#ece8e0",
+                        "primary-fixed": "#e9e1dd",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#e8c086",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#7a5c2b",
+                        "on-surface": "#1d1c17",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#ffdeae",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "content-gap": "32px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px",
+                        "section-gap": "80px",
+                        "margin-mobile": "20px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["EB Garamond"],
+                        "headline-md": ["EB Garamond"],
+                        "technical-data": ["Hanken Grotesk"],
+                        "display-lg": ["EB Garamond"],
+                        "display-lg-mobile": ["EB Garamond"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-caps": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                        "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "500"}],
+                        "technical-data": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "display-lg": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                        "display-lg-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md overflow-x-hidden">
+<!-- Top AppBar (Mobile) -->
+<header class="docked full-width top-0 sticky z-50 bg-surface border-b border-outline-variant flex justify-between items-center w-full px-margin-mobile py-4 transition-all duration-200">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="menu">menu</span>
+<h1 class="font-headline-md text-headline-md tracking-tighter text-primary">AAKASH REALTOR</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="notifications">notifications</span>
+</div>
+</header>
+<!-- Main Content -->
+<main class="min-h-screen pb-24">
+<!-- Sticky Filter Header -->
+<div class="sticky top-[72px] z-40 bg-surface pt-4 pb-2 border-b border-outline-variant px-margin-mobile">
+<!-- Segmented Control -->
+<div class="flex p-1 bg-surface-container-highest rounded mb-4 max-w-sm mx-auto">
+<button class="flex-1 py-1.5 font-label-caps text-label-caps bg-primary text-on-primary shadow-sm rounded-sm transition-all">BUY</button>
+<button class="flex-1 py-1.5 font-label-caps text-label-caps text-on-surface-variant hover:text-primary transition-all">RENT</button>
+</div>
+<!-- Quick Filter Chips -->
+<div class="flex gap-2 overflow-x-auto hide-scrollbar pb-2">
+<div class="flex items-center gap-1 px-3 py-1.5 bg-surface-container border border-outline-variant rounded-full whitespace-nowrap">
+<span class="font-label-caps text-[10px] text-on-surface-variant">CITY:</span>
+<span class="font-label-caps text-[11px] text-primary">KATHMANDU</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+</div>
+<div class="flex items-center gap-1 px-3 py-1.5 bg-surface-container border border-outline-variant rounded-full whitespace-nowrap">
+<span class="font-label-caps text-[10px] text-on-surface-variant">PRICE:</span>
+<span class="font-label-caps text-[11px] text-primary">ANY</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+</div>
+<div class="flex items-center gap-1 px-3 py-1.5 bg-surface-container border border-outline-variant rounded-full whitespace-nowrap">
+<span class="font-label-caps text-[10px] text-on-surface-variant">SIZE:</span>
+<span class="font-label-caps text-[11px] text-primary">1+ ROPANI</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="keyboard_arrow_down">keyboard_arrow_down</span>
+</div>
+</div>
+</div>
+<!-- Search Summary & Sorting -->
+<div class="px-margin-mobile py-4 flex justify-between items-center bg-surface-container-low">
+<p class="font-label-caps text-[10px] text-outline">128 PROPERTIES FOUND</p>
+<div class="flex items-center gap-1 text-primary cursor-pointer active:opacity-50">
+<span class="font-label-caps text-[11px]">SORT: NEWEST</span>
+<span class="material-symbols-outlined text-[16px]" data-icon="sort">sort</span>
+</div>
+</div>
+<!-- Property Listing Grid (Mobile Column) -->
+<section class="px-margin-mobile flex flex-col gap-8 mt-6">
+<!-- Property Card 1 -->
+<article class="flex flex-col group">
+<div class="relative w-full aspect-[4/3] overflow-hidden mb-3">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A sprawling luxury villa in the hills of Kathmandu, Nepal. The architecture features modern sharp lines with traditional stone accents, surrounded by lush manicured gardens and tall pine trees. Soft afternoon sunlight hits the facade, creating long, dramatic shadows. The aesthetic is clean, premium, and reflects high-end real estate photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-Xbb88Y32_15IcgPp6MChZ47VKqRdOOhZ3lV08Ky0XGydZisVY92woOFvn7OEksYG8oPd7qZzLo6_vH73DdXtPAlcU6beehskMtQroKAvuPZBg1vq5dWiFL5QpkSz6T0t8RwRj67INhXnaLjEAxp0JpDoRhuO6pUuMhqphVNw4FBLWDkcBoODqpwdQmLqYgAGnub4C-d4J0pQ6g2LOs_645ViwXLc4EtTtl_O94UCEa4UYnQH1QWp"/>
+<div class="absolute top-3 left-3 bg-primary text-on-primary px-3 py-1 font-label-caps text-[10px] tracking-widest">FOR SALE / बिक्रीमा</div>
+<button class="absolute top-3 right-3 p-2 bg-surface/80 rounded-full backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary" data-icon="favorite">favorite</span>
+</button>
+</div>
+<div class="space-y-2">
+<h2 class="font-headline-sm text-headline-sm text-primary">Heritage Villa, Bhaisepati</h2>
+<p class="font-body-md text-on-surface-variant -mt-1">Karyabinayak, Lalitpur</p>
+<!-- Technical Specs Grid -->
+<div class="tech-grid border border-outline-variant mt-3">
+<div class="tech-cell flex flex-col">
+<span class="font-label-caps text-[9px] text-outline">LAND AREA</span>
+<span class="font-technical-data text-technical-data">0-12-2-1 Ropani <span class="text-[10px] text-outline font-normal">/ 4200 Sqft</span></span>
+</div>
+<div class="tech-cell flex flex-col border-l border-outline-variant">
+<span class="font-label-caps text-[9px] text-outline">ROAD ACCESS</span>
+<span class="font-technical-data text-technical-data">20 ft. Blacktopped</span>
+</div>
+<div class="tech-cell flex flex-col border-t border-outline-variant">
+<span class="font-label-caps text-[9px] text-outline">FACING</span>
+<span class="font-technical-data text-technical-data">North-East</span>
+</div>
+<div class="tech-cell flex flex-col border-t border-l border-outline-variant">
+<span class="font-label-caps text-[9px] text-outline">PRICE</span>
+<span class="font-technical-data text-technical-data text-secondary">NPR 12.5 Cr</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Property Card 2 -->
+<article class="flex flex-col group">
+<div class="relative w-full aspect-[4/3] overflow-hidden mb-3">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="A modern commercial building in downtown Kathmandu, featuring large glass windows reflecting the clear blue sky. The building has a sharp, minimalist corporate design with granite finishes. Street level view showing a clean, wide road access and minimal urban clutter. High-key lighting, professional architectural style, neutral warm tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0vNWEjDm_XQ3LN7HpYljEUFDKv_i1eDPrjzru834tiIoCn34AjXdPdnb-K6hWTUgNfXhppk8KA4HO6Ef-yFaRMrwplpsncM74WF-liebouk4kYS33iWu2Skw9aPVRtoI_rP-ntJBaMeQBEDy_ZL-qp8I38cJ4hr25612KGfgXFnHkP_xgtDMyhp1CEgN-OGFHlgfHU8gVSQdtNSwaC9-71oJwG8XsjWTqg5acAJEidePdhaXwlSvb"/>
+<div class="absolute top-3 left-3 bg-secondary text-on-secondary px-3 py-1 font-label-caps text-[10px] tracking-widest">FOR SALE / बिक्रीमा</div>
+<button class="absolute top-3 right-3 p-2 bg-surface/80 rounded-full backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary" data-icon="favorite">favorite</span>
+</button>
+</div>
+<div class="space-y-2">
+<h2 class="font-headline-sm text-headline-sm text-primary">Commercial Hub, Tinkune</h2>
+<p class="font-body-md text-on-surface-variant -mt-1">Tinkune Main Road, Kathmandu</p>
+<div class="tech-grid border border-outline-variant mt-3">
+<div class="tech-cell flex flex-col">
+<span class="font-label-caps text-[9px] text-outline">LAND AREA</span>
+<span class="font-technical-data text-technical-data">1-4-0-0 Ropani <span class="text-[10px] text-outline font-normal">/ 6845 Sqft</span></span>
+</div>
+<div class="tech-cell flex flex-col border-l border-outline-variant">
+<span class="font-label-caps text-[9px] text-outline">ROAD ACCESS</span>
+<span class="font-technical-data text-technical-data">40 ft. Main Road</span>
+</div>
+<div class="tech-cell flex flex-col border-t border-outline-variant">
+<span class="font-label-caps text-[9px] text-outline">FACING</span>
+<span class="font-technical-data text-technical-data">South</span>
+</div>
+<div class="tech-cell flex flex-col border-t border-l border-outline-variant">
+<span class="font-label-caps text-[9px] text-outline">PRICE</span>
+<span class="font-technical-data text-technical-data text-secondary">NPR 45.0 Cr</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Property Card 3 -->
+<article class="flex flex-col group">
+<div class="relative w-full aspect-[4/3] overflow-hidden mb-3">
+<img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Expansive residential land for sale in the serene outskirts of Budhanilkantha, Nepal. The site shows a gentle slope with clear boundaries, overlooking a valley with distant mountain views. The lighting is early morning mist, creating a peaceful, high-value investment atmosphere. Minimalist photographic style focused on terrain and horizon." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFLCb-bOpDg6mHUx4dnA2DqOme_vVl3GooDc5jFFQ4wY3qxfz1kOj5chmo9AXyoRYIl9BsT06zRakDQJZKBPF2vMiXNte_85PzlwgUFnzj7wnSLSgRkGTx7U91XJIXwaKKCILKP4HewTbrMch_2UI9hRkBWoTJnRETNMIvZ6ALWxns3QO-u7f-7fKmehUFkoDZtvzRflUoUxj6MCon_OrrHWuhhhgy_ZfGYu7B3R7g4WE7nYTpdGSk"/>
+<div class="absolute top-3 left-3 bg-primary text-on-primary px-3 py-1 font-label-caps text-[10px] tracking-widest">FOR SALE / बिक्रीमा</div>
+<button class="absolute top-3 right-3 p-2 bg-surface/80 rounded-full backdrop-blur-sm">
+<span class="material-symbols-outlined text-primary" data-icon="favorite">favorite</span>
+</button>
+</div>
+<div class="space-y-2">
+<h2 class="font-headline-sm text-headline-sm text-primary">Hilltop Residential Plot</h2>
+<p class="font-body-md text-on-surface-variant -mt-1">Budhanilkantha Height, Kathmandu</p>
+<div class="tech-grid border border-outline-variant mt-3">
+<div class="tech-cell flex flex-col">
+<span class="font-label-caps text-[9px] text-outline">LAND AREA</span>
+<span class="font-technical-data text-technical-data">2-0-0-0 Ropani <span class="text-[10px] text-outline font-normal">/ 10940 Sqft</span></span>
+</div>
+<div class="tech-cell flex flex-col border-l border-outline-variant">
+<span class="font-label-caps text-[9px] text-outline">ROAD ACCESS</span>
+<span class="font-technical-data text-technical-data">14 ft. Graveled</span>
+</div>
+<div class="tech-cell flex flex-col border-t border-outline-variant">
+<span class="font-label-caps text-[9px] text-outline">FACING</span>
+<span class="font-technical-data text-technical-data">East</span>
+</div>
+<div class="tech-cell flex flex-col border-t border-l border-outline-variant">
+<span class="font-label-caps text-[9px] text-outline">PRICE</span>
+<span class="font-technical-data text-technical-data text-secondary">NPR 18.0 Cr</span>
+</div>
+</div>
+</div>
+</article>
+<!-- Load More Mockup -->
+<button class="w-full py-4 border border-outline-variant font-label-caps text-label-caps text-primary hover:bg-surface-container transition-colors">
+                LOAD MORE LISTINGS
+            </button>
+</section>
+</main>
+<!-- Filter FAB -->
+<button class="fixed bottom-20 right-6 z-50 bg-primary text-on-primary w-14 h-14 rounded-full shadow-lg flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+</button>
+<!-- Bottom Navigation Bar (Shared Component) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-4 bg-surface border-t border-outline-variant md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-caps text-[10px] mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="search" style="font-variation-settings: 'FILL' 1;">search</span>
+<span class="font-label-caps text-[10px] mt-1">Browse</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="font-label-caps text-[10px] mt-1">Post</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span class="font-label-caps text-[10px] mt-1">Saved</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-[10px] mt-1">Profile</span>
+</a>
+</nav>
+<!-- Micro-interaction Script -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Header scroll effect
+            const header = document.querySelector('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    header.classList.add('shadow-sm');
+                    header.classList.add('bg-surface/95');
+                    header.classList.add('backdrop-blur-md');
+                } else {
+                    header.classList.remove('shadow-sm');
+                    header.classList.remove('bg-surface/95');
+                    header.classList.remove('backdrop-blur-md');
+                }
+            });
+
+            // Segmented control toggle mock
+            const buyRentButtons = document.querySelectorAll('.segmented-control button');
+            buyRentButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buyRentButtons.forEach(b => {
+                        b.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+                        b.classList.add('text-on-surface-variant');
+                    });
+                    btn.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+                    btn.classList.remove('text-on-surface-variant');
+                });
+            });
+
+            // FAB Click simple log
+            const fab = document.querySelector('button[data-icon="tune"]');
+            if(fab) {
+                fab.parentElement.addEventListener('click', () => {
+                    console.log('Open Filter Modal');
+                });
+            }
+        });
+    </script>
+</body></html>

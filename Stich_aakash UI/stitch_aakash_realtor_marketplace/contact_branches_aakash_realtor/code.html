@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Contact Us | AAKASH REALTOR</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Hanken Grotesk', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .font-eb-garamond { font-family: 'EB Garamond', serif; }
+        
+        /* Custom scrollbar for technical aesthetic */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #fef9f1; }
+        ::-webkit-scrollbar-thumb { background: #d0c4be; }
+
+        .location-card {
+            border-bottom: 1px solid #d0c4be;
+        }
+        .input-underline:focus {
+            outline: none;
+            border-bottom-color: #000000;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-container": "#ffd79b",
+                        "surface-container": "#f2ede5",
+                        "surface": "#fef9f1",
+                        "primary-fixed-dim": "#ccc5c1",
+                        "on-error-container": "#93000a",
+                        "outline": "#7e7570",
+                        "inverse-on-surface": "#f5f0e8",
+                        "secondary-fixed-dim": "#e8c086",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f8f3eb",
+                        "primary": "#000000",
+                        "tertiary": "#000000",
+                        "inverse-primary": "#ccc5c1",
+                        "surface-tint": "#625d5b",
+                        "on-surface": "#1d1c17",
+                        "tertiary-fixed": "#cbe9dc",
+                        "tertiary-fixed-dim": "#afcdc0",
+                        "on-primary-fixed-variant": "#4a4643",
+                        "on-surface-variant": "#4d4540",
+                        "primary-fixed": "#e9e1dd",
+                        "on-primary-container": "#89837f",
+                        "inverse-surface": "#32302b",
+                        "on-background": "#1d1c17",
+                        "on-secondary-fixed": "#281800",
+                        "tertiary-container": "#042018",
+                        "secondary": "#775928",
+                        "surface-dim": "#ded9d2",
+                        "on-tertiary-container": "#6d8a7e",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#1e1b19",
+                        "secondary-fixed": "#ffdeae",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#ece8e0",
+                        "surface-container-highest": "#e7e2da",
+                        "primary-container": "#1e1b19",
+                        "on-tertiary-fixed-variant": "#314c42",
+                        "on-tertiary": "#ffffff",
+                        "surface-bright": "#fef9f1",
+                        "background": "#fef9f1",
+                        "surface-variant": "#e7e2da",
+                        "on-secondary-container": "#7a5c2b",
+                        "on-tertiary-fixed": "#042018",
+                        "outline-variant": "#d0c4be",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed-variant": "#5d4213"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "margin-desktop": "64px",
+                        "margin-mobile": "20px",
+                        "section-gap": "80px",
+                        "content-gap": "32px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "technical-data": ["hankenGrotesk"],
+                        "body-md": ["hankenGrotesk"],
+                        "display-lg": ["ebGaramond"],
+                        "body-lg": ["hankenGrotesk"],
+                        "headline-sm": ["ebGaramond"],
+                        "headline-md": ["ebGaramond"],
+                        "label-caps": ["hankenGrotesk"],
+                        "display-lg-mobile": ["ebGaramond"]
+                    },
+                    "fontSize": {
+                        "technical-data": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-lg": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                        "headline-md": ["32px", {"lineHeight": "40px", "fontWeight": "500"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "600"}],
+                        "display-lg-mobile": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.01em", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface">
+<!-- Top Navigation -->
+<header class="bg-surface docked full-width top-0 sticky z-50 border-b border-outline-variant flex justify-between items-center w-full px-margin-mobile py-4 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary cursor-pointer active:opacity-70" data-icon="menu">menu</span>
+<h1 class="font-headline-md text-headline-md tracking-tighter text-primary">AAKASH REALTOR</h1>
+</div>
+<button class="font-label-caps text-label-caps text-primary border border-primary px-3 py-1 hover:bg-primary hover:text-surface transition-colors duration-200">LOGIN / REGISTER</button>
+</header>
+<main class="min-h-screen pb-24">
+<!-- Hero Section -->
+<section class="px-margin-mobile py-base mt-base">
+<h2 class="font-display-lg-mobile text-display-lg-mobile mb-4">Connect with our regional experts.</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">Our specialized advisors across Nepal provide discrete guidance for high-value real estate investments and residential acquisitions.</p>
+</section>
+<!-- Messaging Form -->
+<section class="px-margin-mobile mt-section-gap">
+<div class="border border-outline-variant p-gutter bg-surface-container-low">
+<h3 class="font-headline-sm text-headline-sm mb-base text-primary">Send a Message</h3>
+<form class="space-y-6 mt-6">
+<div class="relative">
+<label class="font-label-caps text-label-caps text-outline uppercase block mb-1">Full Name</label>
+<input class="w-full bg-transparent border-0 border-b border-outline-variant py-2 px-0 focus:ring-0 input-underline font-body-md text-body-md" placeholder="e.g. Anil Sharma" type="text"/>
+</div>
+<div class="relative">
+<label class="font-label-caps text-label-caps text-outline uppercase block mb-1">Email Address</label>
+<input class="w-full bg-transparent border-0 border-b border-outline-variant py-2 px-0 focus:ring-0 input-underline font-body-md text-body-md" placeholder="anil@example.com" type="email"/>
+</div>
+<div class="relative">
+<label class="font-label-caps text-label-caps text-outline uppercase block mb-1">Inquiry Type</label>
+<select class="w-full bg-transparent border-0 border-b border-outline-variant py-2 px-0 focus:ring-0 input-underline font-body-md text-body-md appearance-none">
+<option>Property Acquisition</option>
+<option>Land Investment</option>
+<option>Valuation Services</option>
+<option>Other</option>
+</select>
+</div>
+<div class="relative">
+<label class="font-label-caps text-label-caps text-outline uppercase block mb-1">Message</label>
+<textarea class="w-full bg-transparent border-0 border-b border-outline-variant py-2 px-0 focus:ring-0 input-underline font-body-md text-body-md" placeholder="Describe your requirements..." rows="3"></textarea>
+</div>
+<button class="w-full bg-primary text-surface py-4 font-label-caps text-label-caps tracking-widest active:scale-[0.98] transition-transform" type="submit">SUBMIT ENQUIRY</button>
+</form>
+</div>
+</section>
+<!-- WhatsApp Link -->
+<section class="px-margin-mobile mt-gutter">
+<a class="flex items-center justify-between border border-secondary p-4 bg-surface hover:bg-secondary-container transition-colors" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary" data-icon="chat">chat</span>
+<span class="font-label-caps text-label-caps text-secondary">DIRECT WHATSAPP ADVISOR</span>
+</div>
+<span class="material-symbols-outlined text-secondary" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</section>
+<!-- Branches Section -->
+<section class="mt-section-gap">
+<div class="px-margin-mobile border-b border-outline-variant pb-base">
+<h3 class="font-headline-sm text-headline-sm">Our Presence</h3>
+</div>
+<!-- Branch: Kathmandu -->
+<div class="location-card px-margin-mobile py-gutter">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-headline-sm text-headline-sm text-primary">Kathmandu HQ</h4>
+<p class="font-label-caps text-label-caps text-outline mt-1">PRINCIPAL OFFICE</p>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="apartment">apartment</span>
+</div>
+<div class="space-y-3">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="location_on">location_on</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Level 4, Heritage Plaza II, Kamaladi, Kathmandu</p>
+</div>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="call">call</span>
+<p class="font-technical-data text-technical-data text-on-surface">+977 01-443XXXX</p>
+</div>
+</div>
+<div class="mt-6 aspect-video w-full grayscale contrast-125 border border-outline-variant">
+<div class="w-full h-full bg-cover bg-center" data-alt="A minimalist, high-contrast architectural map of Kamaladi, Kathmandu, rendered in a sophisticated charcoal and cream color palette. The map highlights key real estate landmarks and the Aakash Realtor office with elegant, thin hairlines and discrete typography. The overall aesthetic is clean, professional, and editorial." data-location="Kathmandu" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBp6JyvdhOX0wD-WsTyWL6ceqV0McYdyeXUFZSXRASjCBfJyNg0rsT-GZGbwT107FK_eSydzG9KjaYk96gzyxTStsRTODGBV95VC5dkVCuZwmEE1jQvcowG19LKQe2Ua2mZzxkA8SxRidDzLUebWQoGRx38-p1wJAiG4eBtkGrP_qsL7xI_7JNE3JYgaOk8Gj9l7BEe4g2t-RZTDD590MbDx8CLGWxLZdxFnOqkrWZ4lpFK2Dsdgjqk')"></div>
+</div>
+</div>
+<!-- Branch: Pokhara -->
+<div class="location-card px-margin-mobile py-gutter">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-headline-sm text-headline-sm text-primary">Pokhara</h4>
+<p class="font-label-caps text-label-caps text-outline mt-1">WESTERN REGION ADVISORY</p>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="landscape">landscape</span>
+</div>
+<div class="space-y-3">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="location_on">location_on</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Lake Side Ward 6, Near Central Point, Pokhara</p>
+</div>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="call">call</span>
+<p class="font-technical-data text-technical-data text-on-surface">+977 61-52XXXX</p>
+</div>
+</div>
+<div class="mt-6 aspect-video w-full grayscale contrast-125 border border-outline-variant">
+<div class="w-full h-full bg-cover bg-center" data-alt="A refined, minimalist vector map of the Lakeside area in Pokhara, Nepal. The design uses muted earth tones and deep charcoal accents to maintain a luxury real estate aesthetic. Delicate lines represent the lake shore and primary access roads, highlighting the Aakash Realtor branch location with professional clarity." data-location="Pokhara" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD92k8YwEy_27ZECDGAtD9Oj_Tgl5JE0Hc4tnKw7ndvRbpv5ljX25wBnBJXrIa94KTRyTC5NqzkAzVPMKDCoCHR5cQjETFAVR8vjUM4Z5pNWyEjM3mGkAG6MIHBCIRzm0_bkC68er0FGYhZ2n7jgfm4ETCbXEz1BCcq4876vzif38OQmumZdDRVkgIQuMDzqchgMukoavX63mQhXCnznQBTCv3JwakPMytnl9-04_qoocuEoBT6jODw')"></div>
+</div>
+</div>
+<!-- Branch: Butwal -->
+<div class="location-card px-margin-mobile py-gutter">
+<div class="flex justify-between items-start mb-4">
+<div>
+<h4 class="font-headline-sm text-headline-sm text-primary">Butwal</h4>
+<p class="font-label-caps text-label-caps text-outline mt-1">LUMBINI PROVINCE HUB</p>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="business_center">business_center</span>
+</div>
+<div class="space-y-3">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="location_on">location_on</span>
+<p class="font-body-md text-body-md text-on-surface-variant">Milanchowk, Siddhartha Highway, Butwal</p>
+</div>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-secondary text-[20px]" data-icon="call">call</span>
+<p class="font-technical-data text-technical-data text-on-surface">+977 71-54XXXX</p>
+</div>
+</div>
+<div class="mt-6 aspect-video w-full grayscale contrast-125 border border-outline-variant">
+<div class="w-full h-full bg-cover bg-center" data-alt="A clean and professional digital map layout of Butwal's Milanchowk area. The styling follows a strict minimalist real estate journal aesthetic with off-white backgrounds, fine gray grid lines, and sharp charcoal markers. The Sidhhartha Highway is clearly indicated as a primary transit vein for institutional investment context." data-location="Butwal" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBFK6c15kI3Ej_DyOKsCcF5GKq2g4Hu7Wtd3EVfqsuOcFeNhiBhAAgh2L5bhDIlcBlqZJeR_uOvTxjOfDR2bi2Oi3zLY-5kPBofx5lYuqSJ5q5DwVI0WzDf4bwzEg_62ceNFDGSTocLIOKDzV42-nIK_-5-o84NKmGjK24vvuIEpwqnO7nCrZEFkaTxl4UA74nY8FvTn-4SeT9RtCO3YyFudUxYGFWW9mnBjLDk1udIBqwQbYENsJ7M')"></div>
+</div>
+</div>
+</section>
+<!-- Social & Footer Links -->
+<section class="bg-surface-container-highest px-margin-mobile py-section-gap text-center">
+<h2 class="font-brand-logo text-primary mb-6">AAKASH REALTOR</h2>
+<div class="flex justify-center gap-8 mb-8">
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="share">share</span>
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="mail">mail</span>
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="public">public</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-4">© 2024 Aakash Realtor. Licensed Real Estate Brokerage Nepal.</p>
+<div class="flex flex-wrap justify-center gap-x-4 gap-y-2">
+<a class="font-label-caps text-label-caps text-outline hover:text-primary" href="#">Terms of Service</a>
+<a class="font-label-caps text-label-caps text-outline hover:text-primary" href="#">Privacy Policy</a>
+<a class="font-label-caps text-label-caps text-outline hover:text-primary" href="#">Market Reports</a>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-4 md:hidden border-t border-outline-variant bg-surface">
+<div class="flex flex-col items-center justify-center text-on-surface-variant cursor-pointer scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-caps text-label-caps">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant cursor-pointer scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-label-caps text-label-caps">Browse</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant cursor-pointer scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="font-label-caps text-label-caps">Post</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant cursor-pointer scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span class="font-label-caps text-label-caps">Saved</span>
+</div>
+<!-- Active Tab: Profile (Contact usually falls under this or a dedicated nav, mapping to Profile here for Shell Logic) -->
+<div class="flex flex-col items-center justify-center text-primary font-bold cursor-pointer scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-caps text-label-caps">Profile</span>
+</div>
+</nav>
+<script>
+        // Micro-interaction for form inputs
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            el.addEventListener('focus', () => {
+                el.previousElementSibling.style.color = '#775928'; // secondary color
+                el.previousElementSibling.style.transform = 'translateY(-2px)';
+                el.previousElementSibling.style.transition = 'all 0.2s ease';
+            });
+            el.addEventListener('blur', () => {
+                el.previousElementSibling.style.color = '#7e7570'; // outline color
+                el.previousElementSibling.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>
