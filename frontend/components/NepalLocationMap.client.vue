@@ -109,6 +109,8 @@ onMounted(async () => {
     return
   }
 
+  // Absolute URLs — clear imagePath so Leaflet doesn't prepend it again.
+  L.Icon.Default.imagePath = ''
   L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
