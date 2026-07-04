@@ -160,7 +160,7 @@ useHead({
 
       <!-- Hero gallery (2fr/1fr grid) -->
       <section class="mb-content-gap grid gap-3" :class="sideImgs.length ? 'md:grid-cols-[2fr_1fr] md:grid-rows-[300px_300px]' : ''">
-        <div class="group relative overflow-hidden bg-surface-container md:row-span-2">
+        <div class="group relative overflow-hidden rounded-xl bg-surface-container md:row-span-2">
           <img v-if="heroImg" :src="heroImg" :alt="property.title"
                class="h-full min-h-[300px] w-full object-cover transition-transform duration-700 group-hover:scale-105" />
           <div v-else class="grid h-full min-h-[300px] w-full place-items-center text-on-surface-variant">
@@ -168,7 +168,7 @@ useHead({
           </div>
         </div>
         <button v-for="(g, i) in sideImgs" :key="g.id"
-          class="group relative hidden overflow-hidden bg-surface-container md:block"
+          class="group relative hidden overflow-hidden rounded-xl bg-surface-container md:block"
           @click="activeImg = gallery.indexOf(g)">
           <img :src="g.sizes?.medium || g.url || ''" :alt="`${property.title} photo`"
                class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -246,7 +246,7 @@ useHead({
         <div class="md:col-span-4">
           <div class="space-y-6 md:sticky md:top-[100px]">
             <!-- Inquire Privately (black card) -->
-            <div class="bg-primary p-8 text-white">
+            <div class="rounded-2xl bg-primary p-8 text-white">
               <h4 class="mb-2 font-display text-headline-sm text-white">Inquire Privately</h4>
               <p class="mb-6 font-sans text-[14px] text-primary-fixed-dim">Schedule a private viewing or request documentation.</p>
 
@@ -269,21 +269,21 @@ useHead({
                 <input v-model="form.website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
                 <p v-if="formError" class="font-sans text-sm text-error-container">{{ formError }}</p>
                 <button type="submit" :disabled="sending"
-                  class="w-full bg-white py-4 font-sans text-label-caps uppercase tracking-[0.15em] text-primary transition-all hover:bg-secondary-container">
-                  {{ sending ? 'Sending…' : 'Submit Inquiry' }}
+                  class="w-full rounded-lg bg-secondary py-4 font-sans text-label-caps uppercase tracking-[0.15em] text-navy transition-all duration-300 ease-smooth hover:-translate-y-0.5 hover:bg-secondary-fixed-dim">
+                  {{ sending ? 'Sending…' : 'Request a Visit' }}
                 </button>
                 <a :href="whatsappHref" target="_blank" rel="noopener"
-                   class="flex w-full items-center justify-center gap-2 border border-on-primary-container py-3 font-sans text-label-caps uppercase tracking-[0.15em] text-white transition-colors hover:border-white">
+                   class="flex w-full items-center justify-center gap-2 rounded-lg border border-on-primary-container py-3 font-sans text-label-caps uppercase tracking-[0.15em] text-white transition-colors hover:border-secondary hover:text-secondary">
                   <span class="material-symbols-outlined text-[18px]">chat</span> WhatsApp
                 </a>
               </form>
             </div>
 
             <!-- Assigned manager -->
-            <div v-if="property.agent" class="border border-outline-variant bg-surface p-6">
-              <h4 class="mb-4 font-sans text-[10px] font-semibold uppercase tracking-[0.1em] text-on-surface-variant">Assigned Portfolio Manager</h4>
+            <div v-if="property.agent" class="rounded-xl bg-peach p-6">
+              <h4 class="mb-4 font-sans text-[10px] font-semibold uppercase tracking-[0.1em] text-on-surface-variant">Listing Agent</h4>
               <div class="flex items-center gap-4">
-                <div class="grid h-16 w-16 flex-shrink-0 place-items-center bg-surface-container-highest font-display text-2xl text-primary">
+                <div class="grid h-16 w-16 flex-shrink-0 place-items-center rounded-full bg-surface font-display text-2xl text-primary">
                   {{ property.agent.name?.charAt(0) }}
                 </div>
                 <div>
@@ -295,11 +295,11 @@ useHead({
               </div>
               <div class="mt-6 flex gap-3">
                 <a v-if="property.agent.phone" :href="`tel:${property.agent.phone}`"
-                   class="flex flex-1 items-center justify-center gap-2 border border-primary py-2 font-sans text-[11px] font-semibold uppercase tracking-[0.1em] text-primary transition-all hover:bg-primary hover:text-white">
+                   class="flex flex-1 items-center justify-center gap-2 rounded-full border-[1.5px] border-secondary py-2 font-sans text-[11px] font-semibold uppercase tracking-[0.1em] text-primary transition-all hover:bg-secondary">
                   <span class="material-symbols-outlined text-[16px]">call</span> Call
                 </a>
                 <a :href="whatsappHref" target="_blank" rel="noopener"
-                   class="flex flex-1 items-center justify-center gap-2 border border-primary py-2 font-sans text-[11px] font-semibold uppercase tracking-[0.1em] text-primary transition-all hover:bg-primary hover:text-white">
+                   class="flex flex-1 items-center justify-center gap-2 rounded-full border-[1.5px] border-secondary py-2 font-sans text-[11px] font-semibold uppercase tracking-[0.1em] text-primary transition-all hover:bg-secondary">
                   <span class="material-symbols-outlined text-[16px]">chat</span> WhatsApp
                 </a>
               </div>

@@ -1,54 +1,85 @@
 <script setup lang="ts">
 const year = new Date().getFullYear()
+
+const cols = [
+  {
+    title: 'Explore',
+    links: [
+      { label: 'Buy', to: '/buyHouse' },
+      { label: 'Rent', to: '/rentHouse' },
+      { label: 'Sell with us', to: '/post' },
+      { label: 'Exclusive', to: '/exclusive' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'About', to: '/about' },
+      { label: 'Our Team', to: '/team' },
+      { label: 'Branches', to: '/branches' },
+      { label: 'Insights', to: '/blogs' },
+    ],
+  },
+]
 </script>
 
 <template>
-  <footer class="w-full border-t border-outline-variant bg-surface-container-highest px-margin-mobile py-section-gap md:px-margin-desktop">
-    <div class="mx-auto max-w-shell">
-      <div class="mb-16 grid grid-cols-1 gap-gutter md:grid-cols-4">
-        <div class="md:col-span-1">
-          <h2 class="mb-6 font-display text-headline-sm text-primary">Aakash Realtor</h2>
-          <p class="font-sans text-body-md leading-relaxed text-on-surface-variant">
-            Nepal's premier agency for strategic land acquisition and luxury residential
-            portfolios. Founded on discretion, heritage, and trust.
+  <footer class="w-full bg-ink text-surface">
+    <div class="mx-auto max-w-shell px-margin-mobile pt-24 md:px-margin-desktop">
+      <div class="grid grid-cols-1 gap-12 pb-16 md:grid-cols-[1.8fr_1fr_1fr_1fr] md:pb-18">
+        <div>
+          <div class="flex items-baseline gap-2.5">
+            <span class="font-display text-[26px] font-semibold text-surface">Aakash</span>
+            <span class="text-[11px] font-medium uppercase tracking-[0.32em] text-secondary">Realtor</span>
+          </div>
+          <p class="mt-5 max-w-[34ch] font-sans text-[14px] leading-[1.7] text-surface/50">
+            Nepal's premium marketplace for land, homes and investment properties.
+            Kathmandu · Lalitpur · Pokhara.
           </p>
         </div>
 
-        <div class="flex flex-col gap-4">
-          <h3 class="mb-2 font-sans text-label-caps font-bold uppercase text-primary">Explore</h3>
-          <NuxtLink to="/buyHouse" class="font-sans text-body-md text-on-surface-variant transition-all hover:underline decoration-1 underline-offset-4">Featured Listings</NuxtLink>
-          <NuxtLink to="/buyLand" class="font-sans text-body-md text-on-surface-variant transition-all hover:underline decoration-1 underline-offset-4">Investment Land</NuxtLink>
-          <NuxtLink to="/buyCommercial" class="font-sans text-body-md text-on-surface-variant transition-all hover:underline decoration-1 underline-offset-4">Commercial Assets</NuxtLink>
-          <NuxtLink to="/exclusive" class="font-sans text-body-md text-on-surface-variant transition-all hover:underline decoration-1 underline-offset-4">Heritage Properties</NuxtLink>
+        <div v-for="col in cols" :key="col.title">
+          <div class="mb-5 text-[11px] uppercase tracking-[0.22em] text-surface/40">{{ col.title }}</div>
+          <div class="flex flex-col gap-3">
+            <NuxtLink v-for="l in col.links" :key="l.to" :to="l.to"
+              class="font-sans text-[14px] text-surface/75 transition-colors hover:text-secondary">
+              {{ l.label }}
+            </NuxtLink>
+          </div>
         </div>
 
-        <div class="flex flex-col gap-4">
-          <h3 class="mb-2 font-sans text-label-caps font-bold uppercase text-primary">Company</h3>
-          <NuxtLink to="/about" class="font-sans text-body-md text-on-surface-variant transition-all hover:underline decoration-1 underline-offset-4">About Us</NuxtLink>
-          <NuxtLink to="/blogs" class="font-sans text-body-md text-on-surface-variant transition-all hover:underline decoration-1 underline-offset-4">Market Insights</NuxtLink>
-          <NuxtLink to="/faqs" class="font-sans text-body-md text-on-surface-variant transition-all hover:underline decoration-1 underline-offset-4">FAQs</NuxtLink>
-          <NuxtLink to="/tools/emi" class="font-sans text-body-md text-on-surface-variant transition-all hover:underline decoration-1 underline-offset-4">Tools</NuxtLink>
-        </div>
-
-        <div class="flex flex-col gap-4">
-          <h3 class="mb-2 font-sans text-label-caps font-bold uppercase text-primary">Connect</h3>
-          <span class="font-sans text-body-md text-on-surface-variant">Durbar Marg, Kathmandu / Sanepa, Lalitpur</span>
-          <span class="font-sans text-body-md text-on-surface-variant">info@aakashrealtor.com</span>
-          <span class="font-sans text-body-md text-on-surface-variant">+977 1 4002200</span>
-          <div class="mt-2 flex gap-4">
-            <span class="material-symbols-outlined cursor-pointer text-primary hover:text-secondary">share</span>
-            <span class="material-symbols-outlined cursor-pointer text-primary hover:text-secondary">public</span>
+        <div>
+          <div class="mb-5 text-[11px] uppercase tracking-[0.22em] text-surface/40">Contact</div>
+          <div class="flex flex-col gap-3 font-sans text-[14px] text-surface/75">
+            <span>Durbar Marg, Kathmandu</span>
+            <a href="tel:+97714002200" class="transition-colors hover:text-secondary">+977 1 4002200</a>
+            <a href="mailto:info@aakashrealtor.com" class="transition-colors hover:text-secondary">info@aakashrealtor.com</a>
+            <div class="mt-1 flex gap-4">
+              <NuxtLink to="/tools/emi" class="text-surface/50 transition-colors hover:text-secondary">EMI</NuxtLink>
+              <NuxtLink to="/tools/land-converter" class="text-surface/50 transition-colors hover:text-secondary">Naptol</NuxtLink>
+              <NuxtLink to="/tools/date-converter" class="text-surface/50 transition-colors hover:text-secondary">AD–BS</NuxtLink>
+              <NuxtLink to="/faqs" class="text-surface/50 transition-colors hover:text-secondary">FAQs</NuxtLink>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-col items-center justify-between border-t border-outline-variant pt-8 md:flex-row">
-        <p class="font-sans text-body-md text-on-surface-variant opacity-70">
-          © {{ year }} Aakash Realtor. All Rights Reserved. Built for Trust.
-        </p>
-        <div class="mt-4 flex gap-6 md:mt-0">
-          <span class="font-sans text-label-caps uppercase text-secondary">BS 2081 Calendar</span>
-          <span class="font-sans text-label-caps uppercase text-outline">KTM | PKH | BWA</span>
+      <!-- Giant ghost wordmark -->
+      <div class="overflow-hidden pb-2">
+        <div class="select-none whitespace-nowrap font-display text-[clamp(4rem,11vw,10rem)] leading-[0.95] text-surface/[0.06]">
+          Aakash Realtor
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-4 border-t border-surface/10 py-7 md:pb-9">
+        <div class="font-sans text-[12px] text-surface/40">
+          © {{ year }} Aakash Realtor Pvt. Ltd. — made in Kathmandu, with patience.
+        </div>
+        <div class="flex gap-6">
+          <NuxtLink to="/faqs" class="font-sans text-[12px] text-surface/50 transition-colors hover:text-secondary">Privacy</NuxtLink>
+          <NuxtLink to="/faqs" class="font-sans text-[12px] text-surface/50 transition-colors hover:text-secondary">Terms</NuxtLink>
+          <a href="https://instagram.com" target="_blank" rel="noopener" class="font-sans text-[12px] text-surface/50 transition-colors hover:text-secondary">Instagram</a>
+          <a href="https://facebook.com" target="_blank" rel="noopener" class="font-sans text-[12px] text-surface/50 transition-colors hover:text-secondary">Facebook</a>
         </div>
       </div>
     </div>
