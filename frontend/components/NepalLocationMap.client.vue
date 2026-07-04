@@ -217,13 +217,20 @@ watch(() => [props.lat, props.lng], ([la, ln]) => {
 </template>
 
 <style scoped>
-/* Guarantee the Leaflet panes fill the container and stay below the header. */
+/* Explicit height on the map element itself — a `height: 100%` rule here
+   out-specifies the Tailwind h-[380px] utility and collapses the map to 0px
+   (parent height is content-driven). Keep sizing in one place instead. */
 :deep(.leaflet-container) {
-  height: 100%;
+  height: 380px;
   width: 100%;
   font: inherit;
   background: #dfe6e4;
   z-index: 0;
+}
+@media (min-width: 640px) {
+  :deep(.leaflet-container) {
+    height: 460px;
+  }
 }
 :deep(.leaflet-control-zoom a) {
   border-radius: 8px;
