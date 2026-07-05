@@ -155,10 +155,40 @@ function toggleAmenity(id: number) {
   i >= 0 ? form.amenities.splice(i, 1) : form.amenities.push(id)
 }
 
-function next() { if (step.value < 5) step.value++ }
-function prev() { if (step.value > 1) step.value-- }
+// Fields the API requires (StorePropertyRequest), mapped to the wizard step that owns them.
+const fieldSteps: Record<string, number> = {
+  transaction_type: 1, category_id: 1, title: 1,
+  city_id: 2,
+  price: 3,
+}
+
+function stepProblems(s: number): string[] {
+  const p: string[] = []
+  if (s === 1) {
+    if (!form.category_id) p.push('Choose a property category.')
+    if (!form.title.trim()) p.push('Enter a listing title.')
+  }
+  if (s === 2 && !form.city_id) p.push('Select the city — pick a spot on the map or choose it manually.')
+  if (s === 3 && (form.price === null || form.price === '' || Number.isNaN(Number(form.price)))) {
+    p.push('Enter the asking price.')
+  }
+  return p
+}
+
+function next() {
+  const problems = stepProblems(step.value)
+  if (problems.length) { error.value = problems.join(' '); return }
+  error.value = ''
+  if (step.value < 5) step.value++
+}
+function prev() { error.value = ''; if (step.value > 1) step.value-- }
 
 async function submit() {
+  // Re-check every step before hitting the API, in case one was skipped via the stepper.
+  for (const s of [1, 2, 3]) {
+    const problems = stepProblems(s)
+    if (problems.length) { step.value = s; error.value = problems.join(' '); return }
+  }
   submitting.value = true
   error.value = ''
   try {
@@ -171,8 +201,14 @@ async function submit() {
     }
     navigateTo('/dashboard?posted=1')
   } catch (e) {
-    error.value = e instanceof ApiError ? e.message : 'Could not submit. Please review and try again.'
-    step.value = 3
+    if (e instanceof ApiError) {
+      error.value = Object.values(e.errors).flat().join(' ') || e.message
+      // Send the user to the earliest step that owns a rejected field.
+      const owners = Object.keys(e.errors).map((f) => fieldSteps[f]).filter(Boolean)
+      if (owners.length) step.value = Math.min(...owners)
+    } else {
+      error.value = 'Could not submit. Please review and try again.'
+    }
   } finally {
     submitting.value = false
   }
@@ -422,7 +458,12 @@ useSeoMeta({ title: 'List Your Legacy — Post a Property', robots: 'noindex' })
               against its lalpurja by our team before going live.
             </p>
           </div>
-          <p v-if="error" class="font-sans text-sm text-error">{{ error }}</p>
+        </div>
+
+        <!-- Validation / submission errors — visible on every step -->
+        <div v-if="error" class="mt-10 flex items-start gap-3 border border-error bg-error/5 p-5">
+          <span class="material-symbols-outlined text-error">error</span>
+          <p class="font-sans text-body-md text-error">{{ error }}</p>
         </div>
 
         <!-- Wizard nav -->
